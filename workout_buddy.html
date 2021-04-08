@@ -1,0 +1,150 @@
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+
+<div id="workout_configuration">
+	<b><label for="workout_type">Workout type</label></b>
+	<div>
+	  <input type="radio" id="upper" name="workout_type" value="upper" checked>
+	  <label for="upper">Upper</label>
+	</div>
+	<div>
+	  <input type="radio" id="lower" name="workout_type" value="lower">
+	  <label for="lower">Lower</label>
+	</div>
+	<div>
+	  <input type="radio" id="core" name="workout_type" value="core">
+	  <label for="core">Core</label>
+	</div>
+	<div>
+	  <input type="radio" id="upper_core" name="workout_type" value="upper_core">
+	  <label for="core">Upper + Core</label>
+	</div>
+	<div>
+	  <input type="radio" id="lower_core" name="workout_type" value="lower_core">
+	  <label for="core">Lower + Core</label>
+	</div>
+
+	<br>
+
+	<label for="exercises_csv">Exercises spreadsheet URL:</label><br>
+  	<input type="text" id="exercises_csv" name="exercises_csv" value="file:///Users/rachelwigell/workspace/exercise_app/exercises.csv">
+
+	<br>
+	<br>
+
+	<label for="num_exercises">Number of exercises:</label>
+	<input type="number" id="num_exercises" name="num_exercises" value="10" onChange="show_working_and_total_time()">
+
+	<br>
+
+	<label for="num_sets">Sets for each exercise:</label>
+	<input type="number" id="num_sets" name="num_sets" value="2" onChange="show_working_and_total_time()">
+
+	<br>
+
+	<label for="set_time">Working time per set (seconds):</label>
+	<input type="number" id="set_time" name="set_time" value="45" onChange="show_working_and_total_time()">
+
+	<br>
+
+	<label for="rest_time">Rest time between sets (seconds):</label>
+	<input type="number" id="rest_time" name="rest_time" value="30" onChange="show_working_and_total_time()">
+
+	<br>
+	<br>
+
+	<div id=total_working_time><b>Total working time: </b><div id="total_working_time_value"></div></div>
+	<div id="total_workout_length"><b>Total workout length: </b><div id="total_workout_length_value"></div></div>
+
+	<br>
+
+	<button type="button" id="start_workout" onClick="start_workout()">Start</button>
+</div>
+
+<div id="exercise_screen">
+</div>
+
+<script>
+	show_working_and_total_time();
+
+	function show_working_and_total_time() {
+		var num_exercises = document.getElementById("num_exercises").value;
+		var sets_per_exercise = document.getElementById("num_sets").value;
+		var working_time_per_set = document.getElementById("set_time").value;
+		var rest_time_between = document.getElementById("rest_time").value;
+
+		var total_working_time = num_exercises*sets_per_exercise*working_time_per_set;
+		var total_rest_time = rest_time_between * (num_exercises*sets_per_exercise-1);
+		var total_time = total_working_time + total_rest_time;
+		total_working_time = seconds_to_readable_string(total_working_time);
+		total_time = seconds_to_readable_string(total_time);
+
+		document.getElementById("total_working_time_value").innerHTML=total_working_time; 
+		document.getElementById("total_workout_length_value").innerHTML=total_time; 
+	}
+
+	function seconds_to_readable_string(seconds) {
+		var readable = new Date(seconds * 1000).toISOString().substr(11, 8);
+		var readable = readable.replace(":", " hours ");
+		var readable = readable.replace(":", " minutes ");
+		var readable = readable + " seconds";
+		return readable;
+	}
+
+	function capture_workout_choices() {
+		var num_exercises = document.getElementById("num_exercises").value;
+		var sets_per_exercise = document.getElementById("num_sets").value;
+		var working_time_per_set = document.getElementById("set_time").value;
+		var rest_time_between = document.getElementById("rest_time").value;
+		var workout_type = get_selected_radio_button("workout_type");
+		var spreadsheet_url = document.getElementById("exercises_csv").value;
+
+		var workout_options = {};
+		workout_options['num_exercises'] = num_exercises;
+		workout_options['sets_per_exercise'] = sets_per_exercise;
+		workout_options['working_time_per_set'] = working_time_per_set;
+		workout_options['rest_time_between'] = rest_time_between;
+		workout_options['workout_type'] = workout_type;
+		workout_options['spreadsheet_url'] = spreadsheet_url;
+
+		console.log(workout_options);
+		return workout_options
+	}
+
+	function get_selected_radio_button(button_group_name) {
+		var buttons = document.getElementsByName(button_group_name);
+		var selected_button;
+
+		for(var i = 0; i < buttons.length; i++) {
+		   if(buttons[i].checked)
+		       selected_button = buttons[i].value;
+		 }
+
+		 return selected_button;
+	}
+
+	function read_exercise_csv(csv_url) {
+		$.ajax({
+	        type: "GET",
+	        url: csv_url,
+	        dataType: "text",
+	        async: false,
+	        success: function(data) {parse_csv(data);}
+	     });
+	}
+
+	function parse_csv(csv_data) {
+		console.log(csv_data);
+	}
+
+	function design_workout() {
+
+	}
+
+	function start_workout() {
+		var workout_options = capture_workout_choices();
+		document.getElementById("workout_configuration").innerHTML=""; 
+		read_exercise_csv(workout_options['spreadsheet_url']);
+	}
+
+
+</script>
