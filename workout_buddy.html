@@ -26,7 +26,7 @@
 	<br>
 
 	<label for="exercises_csv">Exercises spreadsheet URL:</label><br>
-  	<input type="text" id="exercises_csv" name="exercises_csv" value="https://raw.githubusercontent.com/rachelwigell/exercise_app/main/exercises.csv">
+  	<input type="text" id="exercises_csv" name="exercises_csv" value="https://raw.githubusercontent.com/rachelwigell/exercise_app/master/exercises.csv">
 
 	<br>
 	<br>
@@ -61,6 +61,10 @@
 </div>
 
 <div id="exercise_screen">
+	<b><div id="exercise_name"></div></b>
+	<div id="exercise_image"></div>
+	<div id="exercise_countdown"></div>
+	<div id="exercise_pause_button"></div>
 </div>
 
 <script>
@@ -103,8 +107,17 @@
 		workout_options['sets_per_exercise'] = sets_per_exercise;
 		workout_options['working_time_per_set'] = working_time_per_set;
 		workout_options['rest_time_between'] = rest_time_between;
-		workout_options['workout_type'] = workout_type;
 		workout_options['spreadsheet_url'] = spreadsheet_url;
+
+		var valid_workout_types = {
+			'upper': ['upper'],
+			'lower': ['lower'],
+			'core': ['core'],
+			'upper_core': ['upper', 'core'],
+			'lower_core': ['lower', 'core']
+		}[workout_type];
+
+		workout_options['valid_workout_types'] = valid_workout_types;
 
 		console.log(workout_options);
 		return workout_options
@@ -123,28 +136,129 @@
 	}
 
 	function read_exercise_csv(csv_url) {
-		$.ajax({
+		var data = $.ajax({
 	        type: "GET",
 	        url: csv_url,
 	        dataType: "text",
-	        async: false,
-	        success: function(data) {parse_csv(data);}
-	     });
+	        async: false
+	     }).responseText;
+		
+		var parsed_data = data.split('\n');
+		for(var i=0; i<parsed_data.length; i++) {
+			parsed_data[i] = parsed_data[i].split(',');
+		}
+		
+		return parsed_data;
 	}
 
-	function parse_csv(csv_data) {
-		console.log(csv_data);
+	function design_workout(parsed_data, workout_options) {
+		var valid_workout_types = workout_options['valid_workout_types'];
+		var num_exercises = workout_options['num_exercises'];
+
+		var valid_workouts = [];
+		var valid_workouts_consumable = [];
+		for(var row_index=0; row_index<parsed_data.length; row_index++){
+			if(valid_workout_types.includes(parsed_data[row_index][1])) {
+				valid_workouts.push(parsed_data[row_index]);
+				valid_workouts_consumable.push(parsed_data[row_index]);
+			}
+		}
+		
+		var workout_plan = []
+		for(var execise_num=0; execise_num<num_exercises; execise_num++) {
+			var chosen_index = random_range(0, valid_workouts_consumable.length);
+			workout_plan.push(valid_workouts_consumable[chosen_index]);
+			valid_workouts_consumable.splice(chosen_index, 1);
+			if(valid_workouts_consumable.length == 0) {
+				valid_workouts_consumable = deep_copy(valid_workouts);
+			}
+		}
+
+		return workout_plan;
 	}
 
-	function design_workout() {
-
-	}
+	var workout = [];
+	var current_exercise_data = {};
+	var workout_options = {};
+	var interval = null;
 
 	function start_workout() {
-		var workout_options = capture_workout_choices();
+		workout_options = capture_workout_choices();
 		document.getElementById("workout_configuration").innerHTML=""; 
-		read_exercise_csv(workout_options['spreadsheet_url']);
+		var parsed_data = read_exercise_csv(workout_options['spreadsheet_url']);
+		workout = design_workout(parsed_data, workout_options);
+		current_exercise_data = {
+			'current_exercise_index': 0,
+			'exercise': workout[0][0],
+			'set_num': 0,
+			'time_remaining': workout_options['working_time_per_set']
+		}
+		populate_exercise_screen(current_exercise_data);
+		workout_loop();
 	}
 
+	function random_range(min, max) {
+	  min = Math.ceil(min);
+	  max = Math.floor(max);
+	  return Math.floor(Math.random() * (max - min) + min);
+	}
+
+	function deep_copy(array_of_arrays) {
+		var new_array = [];
+		for(var i=0; i<array_of_arrays.length; i++){
+			new_array[i] = []
+			for(var j=0; j<array_of_arrays[i].length; j++){
+				new_array[i][j] = array_of_arrays[i][j];
+			}
+		}
+		return new_array;
+	}
+
+	function populate_exercise_screen(exercise_data) {
+		var exercise_name = exercise_data['exercise']
+		var set_num = exercise_data['set_num']
+		var time_remaining = exercise_data['time_remaining']
+		var workout_header = `${exercise_name} (set ${set_num})`
+		var time_remaining = exercise_data['time_remaining']
+
+		document.getElementById("exercise_name").innerHTML=workout_header;
+		document.getElementById("exercise_countdown").innerHTML=time_remaining;
+	}
+
+	function workout_loop() {
+		interval = setInterval(update_exercise, 1000);
+	}
+
+	function update_exercise(){
+		var time_remaining = current_exercise_data['time_remaining'];
+		if(time_remaining > 0){
+			current_exercise_data['time_remaining'] -= 1;
+		}
+		else {
+			clearInterval(interval);
+			current_exercise_data['current_index'] += 1;
+			clear_exercise_screen();
+			rest_loop();
+
+		}
+		populate_exercise_screen(current_exercise_data);
+	}
+
+	function clear_exercise_screen() {
+		document.getElementById("exercise_name").innerHTML="";
+		document.getElementById("exercise_countdown").innerHTML="";
+	}
+
+	function rest_loop() {
+		interval = setInterval(update_rest, 1000);
+	}
+
+	function update_rest() {
+
+	}
+
+	function populate_rest_screen(rest_data) {
+
+	}
 
 </script>
