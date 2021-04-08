@@ -61,14 +61,55 @@
 </div>
 
 <div id="exercise_screen">
+	<b><div id="message"></div></b>
 	<b><div id="exercise_name"></div></b>
 	<div id="exercise_image"></div>
-	<div id="exercise_countdown"></div>
-	<div id="exercise_pause_button"></div>
+	<div id="countdown"></div>
+	<div id="pause_button"></div>
 </div>
 
 <script>
+
+	// global variables
+	var workout = [];
+	var current_exercise_data = {};
+	var workout_options = {};
+	var interval = null;
+
+	// function calls
 	show_working_and_total_time();
+
+	// control flow
+
+	function exercise_loop() {
+		interval = setInterval(update_exercise, 1000);
+	}
+
+	function rest_loop() {
+		interval = setInterval(update_rest, 1000);
+	}
+
+	function pause_workout() {
+		clearInterval(interval);
+		switch_button("resume_workout");
+	}
+
+	function resume_workout() {
+		interval = setInterval(update_exercise, 1000);
+		switch_button("pause_workout");
+	}
+
+	function pause_rest() {
+		clearInterval(interval);
+		switch_button("resume_rest");
+	}
+
+	function resume_rest() {
+		interval = setInterval(update_rest, 1000);
+		switch_button("pause_rest");
+	}
+
+	// update HTML
 
 	function show_working_and_total_time() {
 		var num_exercises = document.getElementById("num_exercises").value;
@@ -86,13 +127,57 @@
 		document.getElementById("total_workout_length_value").innerHTML=total_time; 
 	}
 
-	function seconds_to_readable_string(seconds) {
-		var readable = new Date(seconds * 1000).toISOString().substr(11, 8);
-		var readable = readable.replace(":", " hours ");
-		var readable = readable.replace(":", " minutes ");
-		var readable = readable + " seconds";
-		return readable;
+	function populate_exercise_screen(exercise_data) {
+		var exercise_name = exercise_data['exercise']
+		var set_num = exercise_data['set_num']
+		var time_remaining = exercise_data['time_remaining']
+		var workout_header = `${exercise_name} (set ${set_num})`
+
+		document.getElementById("exercise_name").innerHTML=workout_header;
+		document.getElementById("countdown").innerHTML=time_remaining;
+		switch_button("pause_workout");
 	}
+
+	function clear_exercise_screen() {
+		document.getElementById("exercise_name").innerHTML="";
+		document.getElementById("countdown").innerHTML="";
+	}
+
+	function populate_rest_screen(exercise_data) {
+		var next_exercise_name = exercise_data['exercise']
+		var set_num = exercise_data['set_num']
+		var rest_time_remaining = exercise_data['rest_time_remaining']
+		var workout_header = `Next exercise: ${next_exercise_name} (set ${set_num})`
+
+		document.getElementById("message").innerHTML="Rest time! Grab some water.";
+		document.getElementById("exercise_name").innerHTML=workout_header;
+		document.getElementById("countdown").innerHTML=rest_time_remaining;
+		switch_button("pause_rest");
+	}
+
+	function switch_button(button_choice) {
+		if(button_choice == "pause_workout") {
+			var button_html = '<button type="button" id="pause_button" onClick="pause_workout()">Pause</button>';
+		}
+		else if(button_choice == "resume_workout") {
+			var button_html = '<button type="button" id="pause_button" onClick="resume_workout()">Resume</button>';
+		}
+		else if(button_choice == "pause_rest") {
+			var button_html = '<button type="button" id="pause_button" onClick="pause_rest()">Pause</button>';
+		}
+		else if(button_choice == "resume_rest") {
+			var button_html = '<button type="button" id="pause_button" onClick="resume_rest()">Resume</button>';
+		}
+		document.getElementById("pause_button").innerHTML=button_html;
+	}
+
+	function clear_rest_screen(){
+		document.getElementById("message").innerHTML="";
+		document.getElementById("exercise_name").innerHTML="";
+		document.getElementById("countdown").innerHTML="";
+	}
+
+	// data processing
 
 	function capture_workout_choices() {
 		var num_exercises = document.getElementById("num_exercises").value;
@@ -118,21 +203,7 @@
 		}[workout_type];
 
 		workout_options['valid_workout_types'] = valid_workout_types;
-
-		console.log(workout_options);
 		return workout_options
-	}
-
-	function get_selected_radio_button(button_group_name) {
-		var buttons = document.getElementsByName(button_group_name);
-		var selected_button;
-
-		for(var i = 0; i < buttons.length; i++) {
-		   if(buttons[i].checked)
-		       selected_button = buttons[i].value;
-		 }
-
-		 return selected_button;
 	}
 
 	function read_exercise_csv(csv_url) {
@@ -177,11 +248,6 @@
 		return workout_plan;
 	}
 
-	var workout = [];
-	var current_exercise_data = {};
-	var workout_options = {};
-	var interval = null;
-
 	function start_workout() {
 		workout_options = capture_workout_choices();
 		document.getElementById("workout_configuration").innerHTML=""; 
@@ -190,17 +256,78 @@
 		current_exercise_data = {
 			'current_exercise_index': 0,
 			'exercise': workout[0][0],
-			'set_num': 0,
-			'time_remaining': workout_options['working_time_per_set']
+			'set_num': 1,
+			'time_remaining': workout_options['working_time_per_set'],
+			'rest_time_remaining': null
 		}
 		populate_exercise_screen(current_exercise_data);
-		workout_loop();
+		exercise_loop();
 	}
 
-	function random_range(min, max) {
-	  min = Math.ceil(min);
-	  max = Math.floor(max);
-	  return Math.floor(Math.random() * (max - min) + min);
+	function update_exercise(){
+		var time_remaining = current_exercise_data['time_remaining'];
+		if(time_remaining > 0){
+			current_exercise_data['time_remaining'] -= 1;
+			populate_exercise_screen(current_exercise_data);
+		}
+		else {
+			clearInterval(interval);
+			clear_exercise_screen();
+			increment_exercise_or_set();
+			populate_rest_screen(current_exercise_data);
+			rest_loop();
+		}
+	}
+
+	function update_rest() {
+		var time_remaining = current_exercise_data['rest_time_remaining'];
+		if(time_remaining > 0){
+			current_exercise_data['rest_time_remaining'] -= 1;
+			populate_rest_screen(current_exercise_data);
+		}
+		else {
+			clearInterval(interval);
+			clear_rest_screen();
+			populate_exercise_screen(current_exercise_data);
+			exercise_loop();
+		}
+	}
+
+	function increment_exercise_or_set(){
+		if(current_exercise_data['set_num'] < workout_options['sets_per_exercise']) {
+			current_exercise_data['set_num'] += 1;
+			current_exercise_data['time_remaining'] = workout_options['working_time_per_set'];
+			current_exercise_data['rest_time_remaining'] = workout_options['rest_time_between'];
+		}
+		else {
+			current_exercise_data['set_num'] = 1;
+			current_exercise_data['current_exercise_index'] += 1;
+			current_exercise_data['exercise'] = workout[current_exercise_data['current_exercise_index']][0];
+			current_exercise_data['time_remaining'] = workout_options['working_time_per_set'];
+			current_exercise_data['rest_time_remaining'] = workout_options['rest_time_between'];
+		}
+	}
+
+	// helpers
+
+	function seconds_to_readable_string(seconds) {
+		var readable = new Date(seconds * 1000).toISOString().substr(11, 8);
+		var readable = readable.replace(":", " hours ");
+		var readable = readable.replace(":", " minutes ");
+		var readable = readable + " seconds";
+		return readable;
+	}
+
+	function get_selected_radio_button(button_group_name) {
+		var buttons = document.getElementsByName(button_group_name);
+		var selected_button;
+
+		for(var i = 0; i < buttons.length; i++) {
+		   if(buttons[i].checked)
+		       selected_button = buttons[i].value;
+		 }
+
+		 return selected_button;
 	}
 
 	function deep_copy(array_of_arrays) {
@@ -214,51 +341,10 @@
 		return new_array;
 	}
 
-	function populate_exercise_screen(exercise_data) {
-		var exercise_name = exercise_data['exercise']
-		var set_num = exercise_data['set_num']
-		var time_remaining = exercise_data['time_remaining']
-		var workout_header = `${exercise_name} (set ${set_num})`
-		var time_remaining = exercise_data['time_remaining']
-
-		document.getElementById("exercise_name").innerHTML=workout_header;
-		document.getElementById("exercise_countdown").innerHTML=time_remaining;
-	}
-
-	function workout_loop() {
-		interval = setInterval(update_exercise, 1000);
-	}
-
-	function update_exercise(){
-		var time_remaining = current_exercise_data['time_remaining'];
-		if(time_remaining > 0){
-			current_exercise_data['time_remaining'] -= 1;
-		}
-		else {
-			clearInterval(interval);
-			current_exercise_data['current_index'] += 1;
-			clear_exercise_screen();
-			rest_loop();
-
-		}
-		populate_exercise_screen(current_exercise_data);
-	}
-
-	function clear_exercise_screen() {
-		document.getElementById("exercise_name").innerHTML="";
-		document.getElementById("exercise_countdown").innerHTML="";
-	}
-
-	function rest_loop() {
-		interval = setInterval(update_rest, 1000);
-	}
-
-	function update_rest() {
-
-	}
-
-	function populate_rest_screen(rest_data) {
-
+	function random_range(min, max) {
+	  min = Math.ceil(min);
+	  max = Math.floor(max);
+	  return Math.floor(Math.random() * (max - min) + min);
 	}
 
 </script>
