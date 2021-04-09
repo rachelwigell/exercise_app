@@ -129,12 +129,15 @@
 	}
 
 	function populate_exercise_screen(exercise_data) {
-		var exercise_name = exercise_data['exercise']
-		var set_num = exercise_data['set_num']
-		var time_remaining = exercise_data['time_remaining']
-		var workout_header = `${exercise_name} (set ${set_num})`
+		var exercise_name = exercise_data['exercise'];
+		var set_num = exercise_data['set_num'];
+		var time_remaining = exercise_data['time_remaining'];
+		var workout_header = `${exercise_name} (set ${set_num})`;
+		var exercise_url = exercise_data['exercise_url'];
+		var exercise_image_html = `<img src="${exercise_url}">`;
 
 		document.getElementById("exercise_name").innerHTML=workout_header;
+		document.getElementById("exercise_image").innerHTML=exercise_image_html;
 		document.getElementById("countdown").innerHTML=progress_bar_html(value_to_percentage('exercise'));
 		document.getElementById("workout_progress").innerHTML=progress_bar_html(value_to_percentage('workout'));
 		switch_button("pause_workout");
@@ -142,6 +145,7 @@
 
 	function clear_exercise_screen() {
 		document.getElementById("exercise_name").innerHTML="";
+		document.getElementById("exercise_image").innerHTML="";
 		document.getElementById("countdown").innerHTML="";
 	}
 
@@ -150,9 +154,12 @@
 		var set_num = exercise_data['set_num']
 		var rest_time_remaining = exercise_data['rest_time_remaining']
 		var workout_header = `Next exercise: ${next_exercise_name} (set ${set_num})`
+		var exercise_url = exercise_data['exercise_url'];
+		var exercise_image_html = `<img src="${exercise_url}">`;
 
 		document.getElementById("message").innerHTML="Rest time! Grab some water.";
 		document.getElementById("exercise_name").innerHTML=workout_header;
+		document.getElementById("exercise_image").innerHTML=exercise_image_html;
 		document.getElementById("countdown").innerHTML=progress_bar_html(value_to_percentage('rest'));
 		switch_button("pause_rest");
 	}
@@ -272,7 +279,8 @@
 			'exercise': workout[0][0],
 			'set_num': 1,
 			'time_remaining': workout_options['working_time_per_set'],
-			'rest_time_remaining': null
+			'rest_time_remaining': null,
+			'exercise_url': workout[0][2]
 		}
 		populate_exercise_screen(current_exercise_data);
 		exercise_loop();
@@ -322,6 +330,7 @@
 				current_exercise_data['rest_time_remaining'] = workout_options['rest_time_between'];
 			if(current_exercise_data['current_exercise_index'] < workout_options['num_exercises']) {
 				current_exercise_data['exercise'] = workout[current_exercise_data['current_exercise_index']][0];
+				current_exercise_data['exercise_url'] = workout[current_exercise_data['current_exercise_index']][2];
 			}
 			else {
 				populate_end_screen();
