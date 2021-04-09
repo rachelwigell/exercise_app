@@ -66,6 +66,7 @@
 	<div id="exercise_image"></div>
 	<div id="countdown"></div>
 	<div id="pause_button"></div>
+	<div id="workout_progress"></div>
 </div>
 
 <script>
@@ -134,7 +135,8 @@
 		var workout_header = `${exercise_name} (set ${set_num})`
 
 		document.getElementById("exercise_name").innerHTML=workout_header;
-		document.getElementById("countdown").innerHTML=time_remaining;
+		document.getElementById("countdown").innerHTML=progress_bar_html(value_to_percentage('exercise'));
+		document.getElementById("workout_progress").innerHTML=progress_bar_html(value_to_percentage('workout'));
 		switch_button("pause_workout");
 	}
 
@@ -151,7 +153,7 @@
 
 		document.getElementById("message").innerHTML="Rest time! Grab some water.";
 		document.getElementById("exercise_name").innerHTML=workout_header;
-		document.getElementById("countdown").innerHTML=rest_time_remaining;
+		document.getElementById("countdown").innerHTML=progress_bar_html(value_to_percentage('rest'));
 		switch_button("pause_rest");
 	}
 
@@ -175,6 +177,18 @@
 		document.getElementById("message").innerHTML="";
 		document.getElementById("exercise_name").innerHTML="";
 		document.getElementById("countdown").innerHTML="";
+	}
+
+	function populate_end_screen() {
+		clear_rest_screen();
+		clear_exercise_screen();
+		document.getElementById("pause_button").innerHTML="";
+		document.getElementById("workout_progress").innerHTML="";
+		document.getElementById("message").innerHTML="All done! Way to go.";
+	}
+
+	function progress_bar_html(value){
+		return `<progress value="${value}" max="1"></progress>`
 	}
 
 	// data processing
@@ -266,7 +280,7 @@
 
 	function update_exercise(){
 		var time_remaining = current_exercise_data['time_remaining'];
-		if(time_remaining > 0){
+		if(time_remaining > 1){
 			current_exercise_data['time_remaining'] -= 1;
 			populate_exercise_screen(current_exercise_data);
 		}
@@ -274,14 +288,16 @@
 			clearInterval(interval);
 			clear_exercise_screen();
 			increment_exercise_or_set();
-			populate_rest_screen(current_exercise_data);
-			rest_loop();
+			if(current_exercise_data['current_exercise_index'] < workout_options['num_exercises']) {
+				populate_rest_screen(current_exercise_data);
+				rest_loop();
+			}
 		}
 	}
 
 	function update_rest() {
 		var time_remaining = current_exercise_data['rest_time_remaining'];
-		if(time_remaining > 0){
+		if(time_remaining > 1){
 			current_exercise_data['rest_time_remaining'] -= 1;
 			populate_rest_screen(current_exercise_data);
 		}
@@ -300,11 +316,16 @@
 			current_exercise_data['rest_time_remaining'] = workout_options['rest_time_between'];
 		}
 		else {
-			current_exercise_data['set_num'] = 1;
-			current_exercise_data['current_exercise_index'] += 1;
-			current_exercise_data['exercise'] = workout[current_exercise_data['current_exercise_index']][0];
-			current_exercise_data['time_remaining'] = workout_options['working_time_per_set'];
-			current_exercise_data['rest_time_remaining'] = workout_options['rest_time_between'];
+				current_exercise_data['set_num'] = 1;
+				current_exercise_data['current_exercise_index'] += 1;
+				current_exercise_data['time_remaining'] = workout_options['working_time_per_set'];
+				current_exercise_data['rest_time_remaining'] = workout_options['rest_time_between'];
+			if(current_exercise_data['current_exercise_index'] < workout_options['num_exercises']) {
+				current_exercise_data['exercise'] = workout[current_exercise_data['current_exercise_index']][0];
+			}
+			else {
+				populate_end_screen();
+			}
 		}
 	}
 
@@ -345,6 +366,28 @@
 	  min = Math.ceil(min);
 	  max = Math.floor(max);
 	  return Math.floor(Math.random() * (max - min) + min);
+	}
+
+	function value_to_percentage(progress_type) {
+		if(progress_type == 'exercise') {
+			var max_value = workout_options['working_time_per_set'];
+			var current_value = current_exercise_data['time_remaining']-1;
+			current_value = max_value-current_value;
+		}
+		else if(progress_type == 'workout') {
+			var exercises_in_workout = workout_options['num_exercises'];
+			var sets_per_exercise = workout_options['sets_per_exercise'];
+			var current_exercise_index = current_exercise_data['current_exercise_index'];
+			var current_set_index = current_exercise_data['set_num'];
+			var max_value = exercises_in_workout*sets_per_exercise;
+			var current_value = current_exercise_index*sets_per_exercise+current_set_index;
+		}
+		else {
+			var max_value = workout_options['rest_time_between'];
+			var current_value = current_exercise_data['rest_time_remaining']-1;
+			current_value = max_value-current_value;
+		}
+		return current_value/max_value;
 	}
 
 </script>
