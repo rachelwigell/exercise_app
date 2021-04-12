@@ -27,12 +27,15 @@
 
 	<label for="exercises_csv">Exercises spreadsheet URL:</label><br>
   	<input type="text" id="exercises_csv" name="exercises_csv" value="https://raw.githubusercontent.com/rachelwigell/exercise_app/main/exercises.csv">
+  	<br>OR<br>
+  	<label for="csv_upload">Upload CSV:</label><br>
+  	<input id="csv_upload" name="files[]" multiple="" type="file" onChange="read_uploaded_file(this)"/>
 
 	<br>
 	<br>
 
 	<label for="num_exercises">Number of exercises:</label>
-	<input type="number" id="num_exercises" name="num_exercises" value="10" onChange="show_working_and_total_time()">
+	<input type="number" id="num_exercises" name="num_exercises" value="8" onChange="show_working_and_total_time()">
 
 	<br>
 
@@ -47,7 +50,7 @@
 	<br>
 
 	<label for="rest_time">Rest time between sets (seconds):</label>
-	<input type="number" id="rest_time" name="rest_time" value="30" onChange="show_working_and_total_time()">
+	<input type="number" id="rest_time" name="rest_time" value="25" onChange="show_working_and_total_time()">
 
 	<br>
 	<br>
@@ -76,6 +79,7 @@
 	var current_exercise_data = {};
 	var workout_options = {};
 	var interval = null;
+	var uploaded_data = null;
 
 	// function calls
 	show_working_and_total_time();
@@ -234,8 +238,12 @@
 	        dataType: "text",
 	        async: false
 	     }).responseText;
-		
-		var parsed_data = data.split('\n');
+
+		return data;
+	}
+
+	function parse_exercise_csv(raw_data) {
+		var parsed_data = raw_data.split('\n');
 		for(var i=0; i<parsed_data.length; i++) {
 			parsed_data[i] = parsed_data[i].split(',');
 		}
@@ -271,8 +279,14 @@
 
 	function start_workout() {
 		workout_options = capture_workout_choices();
-		document.getElementById("workout_configuration").innerHTML=""; 
-		var parsed_data = read_exercise_csv(workout_options['spreadsheet_url']);
+		document.getElementById("workout_configuration").innerHTML="";
+		if(uploaded_data) {
+			var raw_data = uploaded_data;
+		}
+		else {
+			var raw_data = read_exercise_csv(workout_options['spreadsheet_url']);
+		}
+		var parsed_data = parse_exercise_csv(raw_data);
 		workout = design_workout(parsed_data, workout_options);
 		current_exercise_data = {
 			'current_exercise_index': 0,
@@ -338,6 +352,17 @@
 				populate_end_screen();
 			}
 		}
+	}
+
+	function read_uploaded_file(element) {
+	    var reader = new FileReader();
+
+	    reader.onload = function(file) {
+	        file_contents = file.target.result;
+	        uploaded_data = file_contents;
+	    };
+
+	    reader.readAsText(element.files[0]);
 	}
 
 	// helpers
