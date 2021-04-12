@@ -293,6 +293,7 @@
 			populate_exercise_screen(current_exercise_data);
 		}
 		else {
+			play_bell_sound();
 			clearInterval(interval);
 			clear_exercise_screen();
 			increment_exercise_or_set();
@@ -310,6 +311,7 @@
 			populate_rest_screen(current_exercise_data);
 		}
 		else {
+			play_bell_sound();
 			clearInterval(interval);
 			clear_rest_screen();
 			populate_exercise_screen(current_exercise_data);
@@ -397,6 +399,11 @@
 			current_value = max_value-current_value;
 		}
 		return current_value/max_value;
+	}
+
+	function play_bell_sound(){
+		var audio = new Audio('bell.wav');
+		audio.play();
 	}
 
 </script>
