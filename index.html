@@ -25,9 +25,6 @@
 
 	<br>
 
-	<label for="exercises_csv">Exercises spreadsheet URL:</label><br>
-  	<input type="text" id="exercises_csv" name="exercises_csv" value="https://raw.githubusercontent.com/rachelwigell/exercise_app/main/exercises.csv">
-  	<br>OR<br>
   	<label for="csv_upload">Upload CSV:</label><br>
   	<input id="csv_upload" name="files[]" multiple="" type="file" onChange="read_uploaded_file(this)"/>
 
@@ -210,14 +207,12 @@
 		var working_time_per_set = document.getElementById("set_time").value;
 		var rest_time_between = document.getElementById("rest_time").value;
 		var workout_type = get_selected_radio_button("workout_type");
-		var spreadsheet_url = document.getElementById("exercises_csv").value;
 
 		var workout_options = {};
 		workout_options['num_exercises'] = num_exercises;
 		workout_options['sets_per_exercise'] = sets_per_exercise;
 		workout_options['working_time_per_set'] = working_time_per_set;
 		workout_options['rest_time_between'] = rest_time_between;
-		workout_options['spreadsheet_url'] = spreadsheet_url;
 
 		var valid_workout_types = {
 			'upper': ['upper'],
@@ -284,7 +279,7 @@
 			var raw_data = uploaded_data;
 		}
 		else {
-			var raw_data = read_exercise_csv(workout_options['spreadsheet_url']);
+			var raw_data = read_exercise_csv("https://raw.githubusercontent.com/rachelwigell/exercise_app/main/exercises.csv");
 		}
 		var parsed_data = parse_exercise_csv(raw_data);
 		workout = design_workout(parsed_data, workout_options);
