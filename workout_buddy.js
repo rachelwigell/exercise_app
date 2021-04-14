@@ -70,9 +70,11 @@ function show_working_and_total_time() {
 	var total_time = total_working_time + total_rest_time;
 	total_working_time = seconds_to_readable_string(total_working_time);
 	total_time = seconds_to_readable_string(total_time);
+	total_working_time_html = `<b>Total working time:</b> ${total_working_time}`;
+	total_workout_length_html = `<b>Total workout length:</b> ${total_time}`;
 
-	document.getElementById("total_working_time_value").innerHTML=total_working_time; 
-	document.getElementById("total_workout_length_value").innerHTML=total_time; 
+	document.getElementById("total_working_time").innerHTML=total_working_time_html; 
+	document.getElementById("total_workout_length").innerHTML=total_workout_length_html; 
 }
 
 function populate_exercise_screen() {
@@ -83,6 +85,7 @@ function populate_exercise_screen() {
 	var exercise_image_url = current_exercise['exercise_image_url'];
 	var exercise_image_html = `<img src="${exercise_image_url}">`;
 
+	document.getElementById("message").innerHTML="It's go time!";
 	document.getElementById("exercise_name").innerHTML=workout_header;
 	document.getElementById("exercise_image").innerHTML=exercise_image_html;
 	document.getElementById("countdown").innerHTML=progress_bar_html(value_to_percentage('exercise'));
@@ -107,16 +110,16 @@ function populate_rest_screen() {
 
 function switch_button(button_choice) {
 	if(button_choice == "pause_workout") {
-		var button_html = '<button type="button" id="pause_button" onClick="pause_workout()">Pause</button>';
+		var button_html = '<button type="button" id="pause_button" onClick="pause_workout()"><h1>Pause</h1></button>';
 	}
 	else if(button_choice == "resume_workout") {
-		var button_html = '<button type="button" id="pause_button" onClick="resume_workout()">Resume</button>';
+		var button_html = '<button type="button" id="pause_button" onClick="resume_workout()"><h1>Resume</h1></button>';
 	}
 	else if(button_choice == "pause_rest") {
-		var button_html = '<button type="button" id="pause_button" onClick="pause_rest()">Pause</button>';
+		var button_html = '<button type="button" id="pause_button" onClick="pause_rest()"><h1>Pause</h1></button>';
 	}
 	else if(button_choice == "resume_rest") {
-		var button_html = '<button type="button" id="pause_button" onClick="resume_rest()">Resume</button>';
+		var button_html = '<button type="button" id="pause_button" onClick="resume_rest()"><h1>Resume</h1></button>';
 	}
 	document.getElementById("pause_button").innerHTML=button_html;
 }
@@ -144,12 +147,11 @@ function populate_countdown_screen(){
 	var rest_time_remaining = current_exercise['rest_time_remaining']
 	var exercise_image_url = current_exercise['exercise_image_url'];
 	var exercise_image_html = `<img src="${exercise_image_url}">`;
-	var countdown_html = `<h1>${rest_time_remaining}</h1>`
 
 	document.getElementById("message").innerHTML="Get ready to start! Your first exercise will be...";
 	document.getElementById("exercise_name").innerHTML=next_exercise_name;
 	document.getElementById("exercise_image").innerHTML=exercise_image_html;
-	document.getElementById("countdown").innerHTML=countdown_html;
+	document.getElementById("countdown").innerHTML=rest_time_remaining;
 }
 
 // data processing
