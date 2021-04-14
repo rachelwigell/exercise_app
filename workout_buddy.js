@@ -1,4 +1,5 @@
 // global variables
+var countdown_length = 10;
 var uploaded_data = null;
 var workout_config = {
 	// keys:
@@ -33,6 +34,10 @@ function rest_loop() {
 	interval = setInterval(update_rest, 1000);
 }
 
+function countdown_loop() {
+	interval = setInterval(update_countdown, 1000);
+}
+
 function pause_workout() {
 	clearInterval(interval);
 	switch_button("resume_workout");
@@ -61,7 +66,7 @@ function show_working_and_total_time() {
 	var rest_time = document.getElementById("rest_time").value;
 
 	var total_working_time = exercise_count*set_count*working_time;
-	var total_rest_time = rest_time * (exercise_count*set_count-1);
+	var total_rest_time = rest_time * (exercise_count*set_count-1)+countdown_length;
 	var total_time = total_working_time + total_rest_time;
 	total_working_time = seconds_to_readable_string(total_working_time);
 	total_time = seconds_to_readable_string(total_time);
@@ -80,7 +85,7 @@ function populate_exercise_screen() {
 
 	document.getElementById("exercise_name").innerHTML=workout_header;
 	document.getElementById("exercise_image").innerHTML=exercise_image_html;
-	document.getElementById("countdown").innerHTML=progress_bar_html(value_to_percentage('exercise_name'));
+	document.getElementById("countdown").innerHTML=progress_bar_html(value_to_percentage('exercise'));
 	document.getElementById("workout_progress").innerHTML=progress_bar_html(value_to_percentage('workout'));
 	switch_button("pause_workout");
 }
@@ -135,7 +140,16 @@ function progress_bar_html(value){
 }
 
 function populate_countdown_screen(){
+	var next_exercise_name = current_exercise['exercise_name']
+	var rest_time_remaining = current_exercise['rest_time_remaining']
+	var exercise_image_url = current_exercise['exercise_image_url'];
+	var exercise_image_html = `<img src="${exercise_image_url}">`;
+	var countdown_html = `<h1>${rest_time_remaining}</h1>`
 
+	document.getElementById("message").innerHTML="Get ready to start! Your first exercise will be...";
+	document.getElementById("exercise_name").innerHTML=next_exercise_name;
+	document.getElementById("exercise_image").innerHTML=exercise_image_html;
+	document.getElementById("countdown").innerHTML=countdown_html;
 }
 
 // data processing
@@ -221,18 +235,18 @@ function start_workout() {
 		'exercise_name': workout_plan[0][0],
 		'set_index': 1,
 		'working_time_remaining': workout_config['working_time'],
-		'rest_time_remaining': null,
+		'rest_time_remaining': countdown_length,
 		'exercise_image_url': workout_plan[0][2]
 	}
-	populate_exercise_screen(current_exercise);
-	exercise_loop();
+	populate_countdown_screen();
+	countdown_loop();
 }
 
 function update_exercise(){
 	var working_time_remaining = current_exercise['working_time_remaining'];
 	if(working_time_remaining > 1){
 		current_exercise['working_time_remaining'] -= 1;
-		populate_exercise_screen(current_exercise);
+		populate_exercise_screen();
 	}
 	else {
 		play_bell_sound();
@@ -251,6 +265,21 @@ function update_rest() {
 	if(rest_time_remaining > 1){
 		current_exercise['rest_time_remaining'] -= 1;
 		populate_rest_screen();
+	}
+	else {
+		play_bell_sound();
+		clearInterval(interval);
+		clear_screen();
+		populate_exercise_screen();
+		exercise_loop();
+	}
+}
+
+function update_countdown() {
+	var rest_time_remaining = current_exercise['rest_time_remaining'];
+	if(rest_time_remaining > 1){
+		current_exercise['rest_time_remaining'] -= 1;
+		populate_countdown_screen();
 	}
 	else {
 		play_bell_sound();
@@ -343,9 +372,7 @@ function value_to_percentage(progress_type) {
 		var exercise_index = current_exercise['exercise_index'];
 		var current_set_index = current_exercise['set_index'];
 		var max_value = exercises_in_workout*set_count;
-		var current_value = exercise_index
-
-		*set_count+current_set_index;
+		var current_value = exercise_index*set_count+current_set_index;
 	}
 	else {
 		var max_value = workout_config['rest_time'];
