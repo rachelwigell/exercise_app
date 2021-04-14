@@ -25,7 +25,7 @@
 
 	<br>
 
-  	<label for="csv_upload">Upload CSV:</label><br>
+  	<label for="csv_upload">Upload exercise CSV (optional):</label><br>
   	<input id="csv_upload" name="files[]" multiple="" type="file" onChange="read_uploaded_file(this)"/>
 
 	<br>
@@ -36,7 +36,7 @@
 
 	<br>
 
-	<label for="set_count">Sets for each exercise:</label>
+	<label for="set_count">Sets of each exercise:</label>
 	<input type="number" id="set_count" name="set_count" value="2" onChange="show_working_and_total_time()">
 
 	<br>
@@ -52,21 +52,21 @@
 	<br>
 	<br>
 
-	<div id=total_working_time><b>Total working time: </b><div id="total_working_time_value"></div></div>
-	<div id="total_workout_length"><b>Total workout length: </b><div id="total_workout_length_value"></div></div>
+	<div id=total_working_time></div>
+	<div id="total_workout_length"></div>
 
 	<br>
 
-	<button type="button" id="start_workout" onClick="start_workout()">Start</button>
+	<button type="button" id="start_workout" onClick="start_workout()"><h1>Start</h1></button>
 </div>
 
 <div id="exercise_screen">
-	<b><div id="message"></div></b>
-	<b><div id="exercise_name"></div></b>
+	<h2><div id="message"></div></h2>
+	<h1><div id="exercise_name"></div></h1>
 	<div id="exercise_image"></div>
-	<div id="countdown"></div>
+	<h1><div id="countdown"></div></h1>
 	<div id="pause_button"></div>
-	<div id="workout_progress"></div>
+	<h1><div id="workout_progress"></div></h1>
 </div>
 
 <script type="text/javascript" src="workout_buddy.js"></script>
