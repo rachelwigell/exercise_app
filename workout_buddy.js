@@ -160,21 +160,16 @@ function capture_workout_choices() {
 	var set_count = document.getElementById("set_count").value;
 	var working_time = document.getElementById("working_time").value;
 	var rest_time = document.getElementById("rest_time").value;
-	var workout_type = get_selected_radio_button("workout_type");
+
+	var valid_exercise_types = []
+	if(document.getElementById("upper").checked) { valid_exercise_types = valid_exercise_types.concat('upper'); }
+	if(document.getElementById("lower").checked) { valid_exercise_types = valid_exercise_types.concat('lower'); }
+	if(document.getElementById("core").checked) { valid_exercise_types = valid_exercise_types.concat('core'); }
 
 	workout_config['exercise_count'] = exercise_count;
 	workout_config['set_count'] = set_count;
 	workout_config['working_time'] = working_time;
 	workout_config['rest_time'] = rest_time;
-
-	var valid_exercise_types = {
-		'upper': ['upper'],
-		'lower': ['lower'],
-		'core': ['core'],
-		'upper_core': ['upper', 'core'],
-		'lower_core': ['lower', 'core']
-	}[workout_type];
-
 	workout_config['valid_exercise_types'] = valid_exercise_types;
 }
 
@@ -331,18 +326,6 @@ function seconds_to_readable_string(seconds) {
 	var readable = readable.replace(":", " minutes ");
 	var readable = readable + " seconds";
 	return readable;
-}
-
-function get_selected_radio_button(button_group_name) {
-	var buttons = document.getElementsByName(button_group_name);
-	var selected_button;
-
-	for(var i = 0; i < buttons.length; i++) {
-	   if(buttons[i].checked)
-	       selected_button = buttons[i].value;
-	 }
-
-	 return selected_button;
 }
 
 function deep_copy(array_of_arrays) {
