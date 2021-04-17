@@ -1,5 +1,5 @@
 // global variables
-var countdown_length = 2;
+var countdown_length = 10;
 var uploaded_data = null;
 var workout_config = {
 	// keys:
