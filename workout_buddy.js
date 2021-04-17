@@ -1,5 +1,5 @@
 // global variables
-var countdown_length = 10;
+var countdown_length = 2;
 var uploaded_data = null;
 var workout_config = {
 	// keys:
@@ -58,6 +58,20 @@ function resume_rest() {
 	switch_button("pause_rest");
 }
 
+function skip_workout() {
+	current_exercise['working_time_remaining'] = 0;
+	clearInterval(interval);
+	resume_workout();
+	populate_exercise_screen();
+}
+
+function skip_rest() {
+	current_exercise['rest_time_remaining'] = 0;
+	clearInterval(interval);
+	resume_rest();
+	populate_rest_screen();
+}
+
 // update HTML
 function show_working_and_total_time() {
 	var exercise_count = document.getElementById("exercise_count").value;
@@ -111,17 +125,22 @@ function populate_rest_screen() {
 function switch_button(button_choice) {
 	if(button_choice == "pause_workout") {
 		var button_html = '<button type="button" id="pause_button" onClick="pause_workout()"><h1>Pause</h1></button>';
+		var skip_html = '<button type="button" id="skip_button" onClick="skip_workout()"><h1>Skip &gt;&gt;</h1></button>';
 	}
 	else if(button_choice == "resume_workout") {
 		var button_html = '<button type="button" id="pause_button" onClick="resume_workout()"><h1>Resume</h1></button>';
+		var skip_html = '<button type="button" id="skip_button" onClick="skip_workout()"><h1>Skip &gt;&gt;</h1></button>';
 	}
 	else if(button_choice == "pause_rest") {
 		var button_html = '<button type="button" id="pause_button" onClick="pause_rest()"><h1>Pause</h1></button>';
+		var skip_html = '<button type="button" id="skip_button" onClick="skip_rest()"><h1>Skip &gt;&gt;</h1></button>';
 	}
 	else if(button_choice == "resume_rest") {
 		var button_html = '<button type="button" id="pause_button" onClick="resume_rest()"><h1>Resume</h1></button>';
+		var skip_html = '<button type="button" id="skip_button" onClick="skip_rest()"><h1>Skip &gt;&gt;</h1></button>';
 	}
 	document.getElementById("pause_button").innerHTML=button_html;
+	document.getElementById("skip_button").innerHTML=skip_html;
 }
 
 function clear_screen(){
@@ -134,6 +153,7 @@ function clear_screen(){
 function populate_end_screen() {
 	clear_screen();
 	document.getElementById("pause_button").innerHTML="";
+	document.getElementById("skip_button").innerHTML="";
 	document.getElementById("workout_progress").innerHTML="";
 	document.getElementById("message").innerHTML="All done! Way to go.";
 }

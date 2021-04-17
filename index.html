@@ -1,5 +1,9 @@
 <script type="text/javascript" src="https://code.jquery.com/jquery-1.7.1.min.js"></script>
 
+<style>
+  form { display: inline; }
+</style>
+
 <div id="workout_configuration">
 	<b><label for="workout_type">Areas to work</label></b>
 	<div>
@@ -39,7 +43,7 @@
 	<br>
 
 	<label for="rest_time">Rest time between sets (seconds):</label>
-	<input type="number" id="rest_time" name="rest_time" value="25" onChange="show_working_and_total_time()">
+	<input type="number" id="rest_time" name="rest_time" value="20" onChange="show_working_and_total_time()">
 
 	<br>
 	<br>
@@ -57,7 +61,7 @@
 	<h1><div id="exercise_name"></div></h1>
 	<div id="exercise_image"></div>
 	<h1><div id="countdown"></div></h1>
-	<div id="pause_button"></div>
+	<form id="pause_button"></form> <form id="skip_button"></form>
 	<h1><div id="workout_progress"></div></h1>
 </div>
 
