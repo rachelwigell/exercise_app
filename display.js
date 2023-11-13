@@ -74,7 +74,6 @@ function switch_button(button_choice) {
 }
 
 function clear_screen(){
-	document.getElementById("error_messages").innerHTML="";
 	document.getElementById("message").innerHTML="";
 	document.getElementById("exercise_name").innerHTML="";
 	document.getElementById("exercise_image").innerHTML="";
