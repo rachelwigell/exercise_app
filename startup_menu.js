@@ -131,21 +131,39 @@ function design_workout(parsed_data) {
 	var valid_exercise_types = workout_config['valid_exercise_types'];
 	var exercise_count = workout_config['exercise_count'];
 
-	var valid_workouts = [];
-	var valid_workouts_consumable = [];
-	for(var row_index=0; row_index<parsed_data.length; row_index++){
-		if(valid_exercise_types.includes(parsed_data[row_index]['exercise_type'])) {
-			valid_workouts.push(parsed_data[row_index]);
-			valid_workouts_consumable.push(parsed_data[row_index]);
-		}
+	var valid_workouts = {};
+	var valid_workouts_consumable = {};
+	if(valid_exercise_types.includes("upper")) {
+		valid_workouts["upper"] = [];
+		valid_workouts_consumable["upper"] = [];
+	}
+	if(valid_exercise_types.includes("lower")) {
+		valid_workouts["lower"] = [];
+		valid_workouts_consumable["lower"] = [];
+	}
+	if(valid_exercise_types.includes("core")) {
+		valid_workouts["core"] = [];
+		valid_workouts_consumable["core"] = [];
 	}
 	
+	for(var row_index=0; row_index<parsed_data.length; row_index++){
+		var exercise_type = parsed_data[row_index]['exercise_type'];
+		if(valid_exercise_types.includes(exercise_type)) {
+			valid_workouts[exercise_type].push(parsed_data[row_index]);
+			valid_workouts_consumable[exercise_type].push(parsed_data[row_index]);
+		}
+	}
+
 	for(var execise_num=0; execise_num<exercise_count; execise_num++) {
-		var chosen_index = random_range(0, valid_workouts_consumable.length);
-		workout_plan.push(valid_workouts_consumable[chosen_index]);
-		valid_workouts_consumable.splice(chosen_index, 1);
-		if(valid_workouts_consumable.length == 0) {
-			valid_workouts_consumable = deep_copy(valid_workouts);
+		// weighting to make the types equally likely
+		var chosen_type = valid_exercise_types[random_range(0, valid_exercise_types.length)];
+		var chosen_subset = valid_workouts_consumable[chosen_type];
+		var chosen_index = random_range(0, valid_workouts_consumable[chosen_type].length);
+		workout_plan.push(valid_workouts_consumable[chosen_type][chosen_index]);
+		valid_workouts_consumable[chosen_type].splice(chosen_index, 1);
+		
+		if(valid_workouts_consumable[chosen_type].length == 0) {
+			valid_workouts_consumable[chosen_type] = deep_copy(valid_workouts[chosen_type]);
 		}
 	}
 }

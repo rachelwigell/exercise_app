@@ -6,12 +6,14 @@ function seconds_to_readable_string(seconds) {
 	return readable;
 }
 
-function deep_copy(array_of_arrays) {
+function deep_copy(array_of_hashes) {
 	var new_array = [];
-	for(var i=0; i<array_of_arrays.length; i++){
-		new_array[i] = []
-		for(var j=0; j<array_of_arrays[i].length; j++){
-			new_array[i][j] = array_of_arrays[i][j];
+	for(var i=0; i<array_of_hashes.length; i++){
+		var row = array_of_hashes[i];
+		new_array[i] = {
+			"exercise_name": row["exercise_name"],
+			"exercise_type": row["exercise_type"],
+			"exercise_image": row["exercise_image"]
 		}
 	}
 	return new_array;
