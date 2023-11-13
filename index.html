@@ -1,73 +1,79 @@
-<script type="text/javascript" src="https://code.jquery.com/jquery-1.7.1.min.js"></script>
+<head>
+	<script type="text/javascript" src="https://code.jquery.com/jquery-1.7.1.min.js"></script>
 
-<style>
-  form { display: inline; }
-</style>
+	<style>
+	  form { display: inline; }
+	</style>
 
-<div id="workout_configuration" meta name="viewport" content="width=device-width, initial-scale=1">
-	<b><label for="workout_type">Areas to work</label></b>
-	<div>
-	  <input type="checkbox" id="upper" name="workout_type" value="upper" checked>
-	  <label for="upper">Upper</label>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+	<div id="workout_configuration">
+		<b><label for="workout_type">Areas to work</label></b>
+		<div>
+		  <input type="checkbox" id="upper" name="workout_type" value="upper" checked>
+		  <label for="upper">Upper</label>
+		</div>
+		<div>
+		  <input type="checkbox" id="lower" name="workout_type" value="lower" checked>
+		  <label for="lower">Lower</label>
+		</div>
+		<div>
+		  <input type="checkbox" id="core" name="workout_type" value="core" checked>
+		  <label for="core">Core</label>
+		</div>
+
+		<br>
+
+	  	<label for="csv_upload">Upload exercise CSV (optional):</label><br>
+	  	<input id="csv_upload" name="files[]" multiple="" type="file" onChange="read_uploaded_file(this)"/>
+
+		<br>
+		<br>
+
+		<label for="exercise_count">Number of exercises:</label>
+		<input type="number" id="exercise_count" name="exercise_count" value="8" onChange="show_working_and_total_time()">
+
+		<br>
+
+		<label for="set_count">Sets of each exercise:</label>
+		<input type="number" id="set_count" name="set_count" value="2" onChange="show_working_and_total_time()">
+
+		<br>
+
+		<label for="working_time">Working time per set (seconds):</label>
+		<input type="number" id="working_time" name="working_time" value="45" onChange="show_working_and_total_time()">
+
+		<br>
+
+		<label for="rest_time">Rest time between sets (seconds):</label>
+		<input type="number" id="rest_time" name="rest_time" value="20" onChange="show_working_and_total_time()">
+
+		<br>
+		<br>
+
+		<div id="total_working_time"></div>
+		<div id="total_workout_length"></div>
+
+		<br>
+
+		<button type="button" id="start_workout" onClick="start_workout()"><h1>Start</h1></button>
+
+		<br>
+
+		<div id="error_messages" style="color: red;"></div>
 	</div>
-	<div>
-	  <input type="checkbox" id="lower" name="workout_type" value="lower" checked>
-	  <label for="lower">Lower</label>
+
+	<div id="exercise_screen" meta name="viewport" content="width=device-width, initial-scale=1">
+		<h2><div id="message"></div></h2>
+		<h1><div id="exercise_name"></div></h1>
+		<div id="exercise_image"></div>
+		<h1><div id="countdown"></div></h1>
+		<form id="pause_button"></form> <form id="skip_button"></form>
+		<h1><div id="workout_progress"></div></h1>
 	</div>
-	<div>
-	  <input type="checkbox" id="core" name="workout_type" value="core" checked>
-	  <label for="core">Core</label>
-	</div>
-
-	<br>
-
-  	<label for="csv_upload">Upload exercise CSV (optional):</label><br>
-  	<input id="csv_upload" name="files[]" multiple="" type="file" onChange="read_uploaded_file(this)"/>
-
-	<br>
-	<br>
-
-	<label for="exercise_count">Number of exercises:</label>
-	<input type="number" id="exercise_count" name="exercise_count" value="8" onChange="show_working_and_total_time()">
-
-	<br>
-
-	<label for="set_count">Sets of each exercise:</label>
-	<input type="number" id="set_count" name="set_count" value="2" onChange="show_working_and_total_time()">
-
-	<br>
-
-	<label for="working_time">Working time per set (seconds):</label>
-	<input type="number" id="working_time" name="working_time" value="45" onChange="show_working_and_total_time()">
-
-	<br>
-
-	<label for="rest_time">Rest time between sets (seconds):</label>
-	<input type="number" id="rest_time" name="rest_time" value="20" onChange="show_working_and_total_time()">
-
-	<br>
-	<br>
-
-	<div id="total_working_time"></div>
-	<div id="total_workout_length"></div>
-
-	<br>
-
-	<button type="button" id="start_workout" onClick="start_workout()"><h1>Start</h1></button>
-
-	<br>
-
-	<div id="error_messages" style="color: red;"></div>
-</div>
-
-<div id="exercise_screen" meta name="viewport" content="width=device-width, initial-scale=1">
-	<h2><div id="message"></div></h2>
-	<h1><div id="exercise_name"></div></h1>
-	<div id="exercise_image"></div>
-	<h1><div id="countdown"></div></h1>
-	<form id="pause_button"></form> <form id="skip_button"></form>
-	<h1><div id="workout_progress"></div></h1>
-</div>
+</body>
 
 <script type="text/javascript" src="helpers.js"></script>
 <script type="text/javascript" src="startup_menu.js"></script>
