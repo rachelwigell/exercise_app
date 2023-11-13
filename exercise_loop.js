@@ -68,13 +68,13 @@ function increment_exercise_or_set(){
 		current_exercise['rest_time_remaining'] = workout_config['rest_time'];
 	}
 	else {
-			current_exercise['set_index'] = 1;
-			current_exercise['exercise_index'] += 1;
-			current_exercise['working_time_remaining'] = workout_config['working_time'];
-			current_exercise['rest_time_remaining'] = workout_config['rest_time'];
+		current_exercise['set_index'] = 1;
+		current_exercise['exercise_index'] += 1;
+		current_exercise['working_time_remaining'] = workout_config['working_time'];
+		current_exercise['rest_time_remaining'] = workout_config['rest_time'];
 		if(current_exercise['exercise_index'] < workout_config['exercise_count']) {
-			current_exercise['exercise_name'] = workout_plan[current_exercise['exercise_index']][0];
-			current_exercise['exercise_image_url'] = workout_plan[current_exercise['exercise_index']][2];
+			current_exercise['exercise_name'] = workout_plan[current_exercise['exercise_index']]['exercise_name'];
+			current_exercise['exercise_image_url'] = workout_plan[current_exercise['exercise_index']]['exercise_image'];
 		}
 		else {
 			populate_end_screen();

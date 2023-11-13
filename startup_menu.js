@@ -1,7 +1,7 @@
 var uploaded_data = null;
 var workout_plan = [];
 var workout_config = {
-	// keys:``
+	// keys:
 	// exercise_count - the number of distinct exercises in the workout
 	// set_count - the number of sets per exercise
 	// working_time - working time per set
@@ -42,10 +42,89 @@ function read_exercise_csv(csv_url) {
 function parse_exercise_csv(raw_data) {
 	var parsed_data = raw_data.split('\n');
 	for(var i=0; i<parsed_data.length; i++) {
-		parsed_data[i] = parsed_data[i].split(',');
+		var raw_row = parsed_data[i].split(',')
+		var parsed_row = parse_csv_row(raw_row, i);
+		if(parsed_row == 'errors encountered') {
+			return 'errors encountered';
+		}
+		else {
+			parsed_data[i] = parsed_row;
+		}
 	}
-	
 	return parsed_data;
+}
+
+function parse_csv_row(row, index) {
+	var parsed_row = {};
+	var errors_encountered = false;
+
+	var exercise_name = parse_csv_item(row[0], 'exercise_name');
+	if(exercise_name == 'item missing') {
+		set_error_message("Exercise name missing on row " + index);
+		errors_encountered = true;
+	}
+	else {
+		parsed_row['exercise_name'] = exercise_name;
+	}
+
+	var exercise_type = parse_csv_item(row[1], 'exercise_type');
+	if(exercise_type == 'item missing') {
+		set_error_message("Exercise type missing on row " + index+1);
+		errors_encountered = true;
+	}
+	else if(exercise_type == 'item malformed') {
+		set_error_message("Exercise type is invalid on row " + index+1 + ". Should be one of: upper, lower, or core.");
+		errors_encountered = true;
+	}
+	else {
+		parsed_row['exercise_type'] = exercise_type;
+	}
+
+	parsed_row['exercise_image'] = parse_csv_item(row[2], 'exercise_image');
+
+	if(errors_encountered) {
+		return 'errors encountered';
+	}
+	else {
+		return parsed_row;
+	}
+}
+
+function parse_csv_item(item, item_type) {
+	if(item_type == "exercise_name") {
+		if(item == undefined || item == '') {
+			return 'item missing';
+		}
+		else {
+			return item;
+		}
+	}
+
+	if(item_type == "exercise_type") {
+		item = item.toLowerCase();
+		if(item == undefined || item == '') {
+			return 'item missing';
+		}
+		else if(!(item == 'upper' || item == 'lower' || item == 'core')) {
+			return 'item malformed';
+		}
+		else {
+			return item;
+		}
+	}
+
+	if(item_type == "exercise_image") {
+		if(item == undefined || item == '') {
+			return undefined;
+		}
+		else {
+			return item;
+		}
+	}
+}
+
+function set_error_message(message) {
+	document.getElementById("error_messages").innerHTML="Error encountered parsing your CSV: " + message;
 }
 
 function design_workout(parsed_data) {
@@ -55,7 +134,7 @@ function design_workout(parsed_data) {
 	var valid_workouts = [];
 	var valid_workouts_consumable = [];
 	for(var row_index=0; row_index<parsed_data.length; row_index++){
-		if(valid_exercise_types.includes(parsed_data[row_index][1])) {
+		if(valid_exercise_types.includes(parsed_data[row_index]['exercise_type'])) {
 			valid_workouts.push(parsed_data[row_index]);
 			valid_workouts_consumable.push(parsed_data[row_index]);
 		}
@@ -73,7 +152,6 @@ function design_workout(parsed_data) {
 
 function start_workout() {
 	capture_workout_choices();
-	document.getElementById("workout_configuration").innerHTML="";
 	if(uploaded_data) {
 		var raw_data = uploaded_data;
 	}
@@ -81,17 +159,20 @@ function start_workout() {
 		var raw_data = read_exercise_csv("https://raw.githubusercontent.com/rachelwigell/exercise_app/main/exercises.csv");
 	}
 	var parsed_data = parse_exercise_csv(raw_data);
-	design_workout(parsed_data);
-	current_exercise = {
-		'exercise_index': 0,
-		'exercise_name': workout_plan[0][0],
-		'set_index': 1,
-		'working_time_remaining': workout_config['working_time'],
-		'rest_time_remaining': COUNTDOWN_LENGTH,
-		'exercise_image_url': workout_plan[0][2]
+	if(parsed_data != "errors encountered") {
+		document.getElementById("workout_configuration").innerHTML="";
+		design_workout(parsed_data);
+		current_exercise = {
+			'exercise_index': 0,
+			'exercise_name': workout_plan[0]['exercise_name'],
+			'set_index': 1,
+			'working_time_remaining': workout_config['working_time'],
+			'rest_time_remaining': COUNTDOWN_LENGTH,
+			'exercise_image_url': workout_plan[0]['exercise_image']
+		}
+		populate_countdown_screen();
+		countdown_loop();
 	}
-	populate_countdown_screen();
-	countdown_loop();
 }
 
 function read_uploaded_file(element) {

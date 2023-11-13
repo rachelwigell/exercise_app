@@ -22,7 +22,12 @@ function populate_exercise_screen() {
 	var working_time_remaining = current_exercise['working_time_remaining'];
 	var workout_header = `${exercise_name} (set ${set_index})`;
 	var exercise_image_url = current_exercise['exercise_image_url'];
-	var exercise_image_html = `<img src="${exercise_image_url}">`;
+	if(exercise_image_url == undefined){
+		var exercise_image_htl = "";
+	}
+	else {
+		var exercise_image_html = `<img src="${exercise_image_url}">`;
+	}
 
 	document.getElementById("message").innerHTML="It's go time!";
 	document.getElementById("exercise_name").innerHTML=workout_header;
@@ -69,6 +74,7 @@ function switch_button(button_choice) {
 }
 
 function clear_screen(){
+	document.getElementById("error_messages").innerHTML="";
 	document.getElementById("message").innerHTML="";
 	document.getElementById("exercise_name").innerHTML="";
 	document.getElementById("exercise_image").innerHTML="";
