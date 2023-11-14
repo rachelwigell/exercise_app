@@ -1,4 +1,19 @@
-var uploaded_data = null;
+var SUB_TO_TOP_LEVEL_MAPPING = {
+	"chest": "upper",
+	"shoulders": "upper",
+	"biceps": "upper",
+	"triceps": "upper",
+	"forearms": "upper",
+	"thighs": "lower",
+	"calves": "lower",
+	"abs": "core",
+	"back": "core"
+}
+var TOP_TO_SUB_LEVEL_MAPPING = {
+	"upper": ["chest", "shoulders", "biceps", "triceps", "forearms"],
+	"lower": ["thighs", "calves"],
+	"core": ["abs", "back"]
+}
 var workout_plan = [];
 var workout_config = {
 	// keys:
@@ -6,7 +21,8 @@ var workout_config = {
 	// set_count - the number of sets per exercise
 	// working_time - working time per set
 	// rest_time - length of rest between sets
-	// valid_exercise_types - list of exercise types (e.g. upper, lower) that are valid for this configuration
+	// valid_exercise_types_top_level - list of top-level exercise types (e.g. upper, lower) that are valid for this configuration
+	// valid_exercise_types_sub_level - list of sub-level exercise types (e.g. chest, calves) that are valid for this configuration
 };
 
 // data processing
@@ -16,154 +32,138 @@ function capture_workout_choices() {
 	var working_time = document.getElementById("working_time").value;
 	var rest_time = document.getElementById("rest_time").value;
 
-	var valid_exercise_types = []
-	if(document.getElementById("upper").checked) { valid_exercise_types = valid_exercise_types.concat('upper'); }
-	if(document.getElementById("lower").checked) { valid_exercise_types = valid_exercise_types.concat('lower'); }
-	if(document.getElementById("core").checked) { valid_exercise_types = valid_exercise_types.concat('core'); }
+	var valid_exercise_types_top_level = []
+	var valid_exercise_types_sub_level = []
+	if(document.getElementById("chest").checked) {
+		valid_exercise_types_top_level = valid_exercise_types_top_level.concat('upper')
+		valid_exercise_types_sub_level = valid_exercise_types_sub_level.concat('chest');
+	}
+	if(document.getElementById("shoulders").checked) {
+		valid_exercise_types_top_level = valid_exercise_types_top_level.concat('upper')
+		valid_exercise_types_sub_level = valid_exercise_types_sub_level.concat('shoulders');
+	}
+	if(document.getElementById("biceps").checked) {
+		valid_exercise_types_top_level = valid_exercise_types_top_level.concat('upper')
+		valid_exercise_types_sub_level = valid_exercise_types_sub_level.concat('biceps');
+	}
+	if(document.getElementById("triceps").checked) {
+		valid_exercise_types_top_level = valid_exercise_types_top_level.concat('upper')
+		valid_exercise_types_sub_level = valid_exercise_types_sub_level.concat('triceps');
+	}
+	if(document.getElementById("forearms").checked) {
+		valid_exercise_types_top_level = valid_exercise_types_top_level.concat('upper')
+		valid_exercise_types_sub_level = valid_exercise_types_sub_level.concat('forearms');
+	}
+	if(document.getElementById("thighs").checked) {
+		valid_exercise_types_top_level = valid_exercise_types_top_level.concat('lower')
+		valid_exercise_types_sub_level = valid_exercise_types_sub_level.concat('thighs');
+	}
+	if(document.getElementById("calves").checked) {
+		valid_exercise_types_top_level = valid_exercise_types_top_level.concat('lower')
+		valid_exercise_types_sub_level = valid_exercise_types_sub_level.concat('calves');
+	}
+	if(document.getElementById("abs").checked) {
+		valid_exercise_types_top_level = valid_exercise_types_top_level.concat('core')
+		valid_exercise_types_sub_level = valid_exercise_types_sub_level.concat('abs');
+	}
+	if(document.getElementById("back").checked) {
+		valid_exercise_types_top_level = valid_exercise_types_top_level.concat('core')
+		valid_exercise_types_sub_level = valid_exercise_types_sub_level.concat('back');
+	}
+
+	// deduplicate
+	valid_exercise_types_top_level = new Set(valid_exercise_types_top_level);
+	valid_exercise_types_top_level = Array.from(valid_exercise_types_top_level);
 
 	workout_config['exercise_count'] = exercise_count;
 	workout_config['set_count'] = set_count;
 	workout_config['working_time'] = working_time;
 	workout_config['rest_time'] = rest_time;
-	workout_config['valid_exercise_types'] = valid_exercise_types;
-}
-
-function read_exercise_csv(csv_url) {
-	var data = $.ajax({
-        type: "GET",
-        url: csv_url,
-        dataType: "text",
-        async: false
-     }).responseText;
-
-	return data;
-}
-
-function parse_exercise_csv(raw_data) {
-	var parsed_data = raw_data.split('\n');
-	for(var i=0; i<parsed_data.length; i++) {
-		var raw_row = parsed_data[i].split(',')
-		var parsed_row = parse_csv_row(raw_row, i);
-		if(parsed_row == 'errors encountered') {
-			return 'errors encountered';
-		}
-		else {
-			parsed_data[i] = parsed_row;
-		}
-	}
-	return parsed_data;
-}
-
-function parse_csv_row(row, index) {
-	var parsed_row = {};
-	var errors_encountered = false;
-
-	var exercise_name = parse_csv_item(row[0], 'exercise_name');
-	if(exercise_name == 'item missing') {
-		set_error_message("Exercise name missing on row " + index);
-		errors_encountered = true;
-	}
-	else {
-		parsed_row['exercise_name'] = exercise_name;
-	}
-
-	var exercise_type = parse_csv_item(row[1], 'exercise_type');
-	if(exercise_type == 'item missing') {
-		set_error_message("Exercise type missing on row " + index+1);
-		errors_encountered = true;
-	}
-	else if(exercise_type == 'item malformed') {
-		set_error_message("Exercise type is invalid on row " + index+1 + ". Should be one of: upper, lower, or core.");
-		errors_encountered = true;
-	}
-	else {
-		parsed_row['exercise_type'] = exercise_type;
-	}
-
-	parsed_row['exercise_image'] = parse_csv_item(row[2], 'exercise_image');
-
-	if(errors_encountered) {
-		return 'errors encountered';
-	}
-	else {
-		return parsed_row;
-	}
-}
-
-function parse_csv_item(item, item_type) {
-	if(item_type == "exercise_name") {
-		if(item == undefined || item == '') {
-			return 'item missing';
-		}
-		else {
-			return item;
-		}
-	}
-
-	if(item_type == "exercise_type") {
-		item = item.toLowerCase();
-		if(item == undefined || item == '') {
-			return 'item missing';
-		}
-		else if(!(item == 'upper' || item == 'lower' || item == 'core')) {
-			return 'item malformed';
-		}
-		else {
-			return item;
-		}
-	}
-
-	if(item_type == "exercise_image") {
-		if(item == undefined || item == '') {
-			return undefined;
-		}
-		else {
-			return item;
-		}
-	}
-}
-
-function set_error_message(message) {
-	document.getElementById("error_messages").innerHTML="Error encountered parsing your CSV: " + message;
+	workout_config['valid_exercise_types_top_level'] = valid_exercise_types_top_level;
+	workout_config['valid_exercise_types_sub_level'] = valid_exercise_types_sub_level
 }
 
 function design_workout(parsed_data) {
-	var valid_exercise_types = workout_config['valid_exercise_types'];
+	var valid_exercise_types_top_level = workout_config['valid_exercise_types_top_level'];
+	var valid_exercise_types_sub_level = workout_config['valid_exercise_types_sub_level'];
 	var exercise_count = workout_config['exercise_count'];
 
 	var valid_workouts = {};
 	var valid_workouts_consumable = {};
-	if(valid_exercise_types.includes("upper")) {
-		valid_workouts["upper"] = [];
-		valid_workouts_consumable["upper"] = [];
+
+	if(valid_exercise_types_top_level.includes("upper")) {
+		valid_workouts["upper"] = {};
+		valid_workouts_consumable["upper"] = {};
 	}
-	if(valid_exercise_types.includes("lower")) {
-		valid_workouts["lower"] = [];
-		valid_workouts_consumable["lower"] = [];
+	if(valid_exercise_types_top_level.includes("lower")) {
+		valid_workouts["lower"] = {};
+		valid_workouts_consumable["lower"] = {};
 	}
-	if(valid_exercise_types.includes("core")) {
-		valid_workouts["core"] = [];
-		valid_workouts_consumable["core"] = [];
+	if(valid_exercise_types_top_level.includes("core")) {
+		valid_workouts["core"] = {};
+		valid_workouts_consumable["core"] = {};
+	}
+
+	if(valid_exercise_types_sub_level.includes("chest")) {
+		valid_workouts["upper"]["chest"] = [];
+		valid_workouts_consumable["upper"]["chest"] = [];
+	}
+	if(valid_exercise_types_sub_level.includes("shoulders")) {
+		valid_workouts["upper"]["shoulders"] = [];
+		valid_workouts_consumable["upper"]["shoulders"] = [];
+	}
+	if(valid_exercise_types_sub_level.includes("biceps")) {
+		valid_workouts["upper"]["biceps"] = [];
+		valid_workouts_consumable["upper"]["biceps"] = [];
+	}
+	if(valid_exercise_types_sub_level.includes("triceps")) {
+		valid_workouts["upper"]["triceps"] = [];
+		valid_workouts_consumable["upper"]["triceps"] = [];
+	}
+	if(valid_exercise_types_sub_level.includes("forearms")) {
+		valid_workouts["upper"]["forearms"] = [];
+		valid_workouts_consumable["upper"]["forearms"] = [];
+	}
+	if(valid_exercise_types_sub_level.includes("thighs")) {
+		valid_workouts["lower"]["thighs"] = [];
+		valid_workouts_consumable["lower"]["thighs"] = [];
+	}
+	if(valid_exercise_types_sub_level.includes("calves")) {
+		valid_workouts["lower"]["calves"] = [];
+		valid_workouts_consumable["lower"]["calves"] = [];
+	}
+	if(valid_exercise_types_sub_level.includes("abs")) {
+		valid_workouts["core"]["abs"] = [];
+		valid_workouts_consumable["core"]["abs"] = [];
+	}
+	if(valid_exercise_types_sub_level.includes("back")) {
+		valid_workouts["core"]["back"] = [];
+		valid_workouts_consumable["core"]["back"] = [];
 	}
 	
 	for(var row_index=0; row_index<parsed_data.length; row_index++){
-		var exercise_type = parsed_data[row_index]['exercise_type'];
-		if(valid_exercise_types.includes(exercise_type)) {
-			valid_workouts[exercise_type].push(parsed_data[row_index]);
-			valid_workouts_consumable[exercise_type].push(parsed_data[row_index]);
+		var sub_level_type = parsed_data[row_index]['exercise_type'];
+		if(valid_exercise_types_sub_level.includes(sub_level_type)) {
+			var top_level_type = SUB_TO_TOP_LEVEL_MAPPING[sub_level_type];
+			valid_workouts[top_level_type][sub_level_type].push(parsed_data[row_index]);
+			valid_workouts_consumable[top_level_type][sub_level_type].push(parsed_data[row_index]);
 		}
 	}
 
 	for(var execise_num=0; execise_num<exercise_count; execise_num++) {
 		// weighting to make the types equally likely
-		var chosen_type = valid_exercise_types[random_range(0, valid_exercise_types.length)];
-		var chosen_subset = valid_workouts_consumable[chosen_type];
-		var chosen_index = random_range(0, valid_workouts_consumable[chosen_type].length);
-		workout_plan.push(valid_workouts_consumable[chosen_type][chosen_index]);
-		valid_workouts_consumable[chosen_type].splice(chosen_index, 1);
+		// start with picking top-level type
+		var chosen_top_level_type = valid_exercise_types_top_level[random_range(0, valid_exercise_types_top_level.length)];
+		// pick sub type
+		var valid_sub_types = array_intersection(valid_exercise_types_sub_level, TOP_TO_SUB_LEVEL_MAPPING[chosen_top_level_type]);
+		var chosen_sub_level_type = valid_sub_types[random_range(0, valid_sub_types.length)];
+		// pick specific exercise
+		var chosen_index = random_range(0, valid_workouts_consumable[chosen_top_level_type][chosen_sub_level_type].length);
+		workout_plan.push(valid_workouts_consumable[chosen_top_level_type][chosen_sub_level_type][chosen_index]);
+		valid_workouts_consumable[chosen_top_level_type][chosen_sub_level_type].splice(chosen_index, 1);
 		
-		if(valid_workouts_consumable[chosen_type].length == 0) {
-			valid_workouts_consumable[chosen_type] = deep_copy(valid_workouts[chosen_type]);
+		if(valid_workouts_consumable[chosen_top_level_type][chosen_sub_level_type].length == 0) {
+			valid_workouts_consumable[chosen_top_level_type][chosen_sub_level_type] = deep_copy(valid_workouts[chosen_top_level_type][chosen_sub_level_type]);
 		}
 	}
 }
@@ -191,15 +191,4 @@ function start_workout() {
 		populate_countdown_screen();
 		countdown_loop();
 	}
-}
-
-function read_uploaded_file(element) {
-    var reader = new FileReader();
-
-    reader.onload = function(file) {
-        file_contents = file.target.result;
-        uploaded_data = file_contents;
-    };
-
-    reader.readAsText(element.files[0]);
 }

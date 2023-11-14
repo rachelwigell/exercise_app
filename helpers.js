@@ -47,11 +47,22 @@ function value_to_percentage(progress_type) {
 	return current_value/max_value;
 }
 
-function play_bell_sound(){
+function play_bell_sound() {
 	var audio = new Audio('bell.wav');
 	audio.play();
 }
 
-function progress_bar_html(value){
+function progress_bar_html(value) {
 	return `<progress value="${value}" max="1"></progress>`
 }
+
+function array_intersection(arr1, arr2) {
+    var intersection = [];
+    for(var i=0; i<arr1.length; i++){
+    	var item = arr1[i];
+    	if(arr2.includes(item)) {
+    		intersection.push(item)
+    	}
+    }
+    return intersection; 
+} 

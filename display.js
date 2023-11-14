@@ -99,3 +99,39 @@ function populate_countdown_screen(){
 	document.getElementById("exercise_image").innerHTML=exercise_image_html;
 	document.getElementById("countdown").innerHTML=rest_time_remaining;
 }
+
+$('#upper').click(function() {
+    if ($(this).is(':checked')) {
+        $('#chest').attr('checked', true);
+        $('#shoulders').attr('checked', true);
+        $('#biceps').attr('checked', true);
+        $('#triceps').attr('checked', true);
+        $('#forearms').attr('checked', true);
+    } else {
+        $('#chest').attr('checked', false);
+        $('#shoulders').attr('checked', false);
+        $('#biceps').attr('checked', false);
+        $('#triceps').attr('checked', false);
+        $('#forearms').attr('checked', false);
+    }
+});
+
+$('#lower').click(function() {
+    if ($(this).is(':checked')) {
+        $('#thighs').attr('checked', true);
+        $('#calves').attr('checked', true);
+    } else {
+        $('#thighs').attr('checked', false);
+        $('#calves').attr('checked', false);
+    }
+});
+
+$('#core').click(function() {
+    if ($(this).is(':checked')) {
+        $('#abs').attr('checked', true);
+        $('#back').attr('checked', true);
+    } else {
+        $('#abs').attr('checked', false);
+        $('#back').attr('checked', false);
+    }
+});
