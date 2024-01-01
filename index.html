@@ -9,7 +9,17 @@
 </head>
 
 <body>
-	<div id="workout_configuration">
+	<div id="workout_configuration" meta name="viewport" content="width=device-width, initial-scale=1">
+		<b><label for="stretching">Include:</label></b>
+		<div>
+		  <input type="checkbox" id="warmup" name="stretching" value="warmup" onChange="show_working_and_total_time()" checked>
+		  <label for="warmup">Warmup</label>
+		</div>
+		<div>
+		  <input type="checkbox" id="cooldown" name="stretching" value="cooldown" onChange="show_working_and_total_time()" checked>
+		  <label for="cooldown">Cooldown</label>
+		</div>
+		<br>
 		<b><label for="workout_type">Areas to work</label></b>
 		<div>
 		  <input type="checkbox" id="upper" name="workout_type" value="upper" checked>
@@ -97,11 +107,16 @@
 
 		<br>
 
-		<button type="button" id="start_workout" onClick="start_workout()"><h1>Start</h1></button>
+		<button type="button" id="start_workout" onClick="process_choices()"><h1>Start</h1></button>
 
 		<br>
 
 		<div id="error_messages" style="color: red;"></div>
+	</div>
+
+	<div id="warmup_screen" meta name="viewport" content="width=device-width, initial-scale=1">
+		<h2><div id="warmup_message"></div></h2>
+		<div id="warmup_video"></div>
 	</div>
 
 	<div id="exercise_screen" meta name="viewport" content="width=device-width, initial-scale=1">
@@ -111,6 +126,11 @@
 		<h1><div id="countdown"></div></h1>
 		<form id="pause_button"></form> <form id="skip_button"></form>
 		<h1><div id="workout_progress"></div></h1>
+	</div>
+
+	<div id="cooldown_screen" meta name="viewport" content="width=device-width, initial-scale=1">
+		<h2><div id="cooldown_message"></div></h2>
+		<div id="cooldown_video"></div>
 	</div>
 </body>
 

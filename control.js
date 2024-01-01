@@ -10,6 +10,14 @@ function countdown_loop() {
 	interval = setInterval(update_countdown, 1000);
 }
 
+function warmup_end() {
+	interval = setInterval(start_main_workout, 103000);
+}
+
+function cooldown_end() {
+	interval = setInterval(populate_end_screen, 205000);
+}
+
 function pause_workout() {
 	clearInterval(interval);
 	switch_button("resume_workout");

@@ -80,7 +80,9 @@ function capture_workout_choices() {
 	workout_config['working_time'] = working_time;
 	workout_config['rest_time'] = rest_time;
 	workout_config['valid_exercise_types_top_level'] = valid_exercise_types_top_level;
-	workout_config['valid_exercise_types_sub_level'] = valid_exercise_types_sub_level
+	workout_config['valid_exercise_types_sub_level'] = valid_exercise_types_sub_level;
+	workout_config['include_warmup'] = document.getElementById("warmup").checked;
+	workout_config['include_cooldown'] = document.getElementById("cooldown").checked;
 }
 
 function design_workout(parsed_data) {
@@ -168,7 +170,7 @@ function design_workout(parsed_data) {
 	}
 }
 
-function start_workout() {
+function process_choices() {
 	capture_workout_choices();
 	if(uploaded_data) {
 		var raw_data = uploaded_data;
@@ -188,7 +190,37 @@ function start_workout() {
 			'rest_time_remaining': COUNTDOWN_LENGTH,
 			'exercise_image_url': workout_plan[0]['exercise_image']
 		}
-		populate_countdown_screen();
-		countdown_loop();
+		start_warmup();
 	}
+}
+
+function start_warmup() {	
+	if(workout_config["include_warmup"]){
+		update_warmup_cooldown_screen("warmup", "populate");
+		warmup_end();
+	}
+	else {
+		start_main_workout();
+	}
+}
+
+function start_cooldown() {
+	document.getElementById("pause_button").innerHTML="";
+	document.getElementById("skip_button").innerHTML="";
+	document.getElementById("workout_progress").innerHTML="";
+
+	if(workout_config["include_cooldown"]){
+		update_warmup_cooldown_screen("cooldown", "populate");
+		cooldown_end();
+	}
+	else {
+		populate_end_screen();
+	}
+}
+
+function start_main_workout() {
+	update_warmup_cooldown_screen("warmup", "clear");
+	clearInterval(interval);
+	populate_countdown_screen();
+	countdown_loop();
 }

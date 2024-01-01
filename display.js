@@ -3,8 +3,20 @@ function show_working_and_total_time() {
 	var set_count = document.getElementById("set_count").value;
 	var working_time = document.getElementById("working_time").value;
 	var rest_time = document.getElementById("rest_time").value;
+	if(document.getElementById("warmup").checked){
+		var warmup_length = 103;
+	}
+	else{
+		var warmup_length = 0
+	}
+	if(document.getElementById("cooldown").checked){
+		var cooldown_length = 205;
+	}
+	else{
+		var cooldown_length = 0
+	}
 
-	var total_working_time = exercise_count*set_count*working_time;
+	var total_working_time = exercise_count*set_count*working_time + warmup_length + cooldown_length;
 	var total_rest_time = rest_time * (exercise_count*set_count-1)+COUNTDOWN_LENGTH;
 	var total_time = total_working_time + total_rest_time;
 	total_working_time = seconds_to_readable_string(total_working_time);
@@ -81,10 +93,9 @@ function clear_screen(){
 }
 
 function populate_end_screen() {
+	update_warmup_cooldown_screen("cooldown", "clear");
+	clearInterval(interval);
 	clear_screen();
-	document.getElementById("pause_button").innerHTML="";
-	document.getElementById("skip_button").innerHTML="";
-	document.getElementById("workout_progress").innerHTML="";
 	document.getElementById("message").innerHTML="All done! Way to go.";
 }
 
@@ -98,6 +109,25 @@ function populate_countdown_screen(){
 	document.getElementById("exercise_name").innerHTML=next_exercise_name;
 	document.getElementById("exercise_image").innerHTML=exercise_image_html;
 	document.getElementById("countdown").innerHTML=rest_time_remaining;
+}
+
+function update_warmup_cooldown_screen(screen, action){
+	if(action == "clear"){
+		document.getElementById("warmup_video").innerHTML = "";
+		document.getElementById("warmup_message").innerHTML = "";
+		document.getElementById("cooldown_video").innerHTML = "";
+		document.getElementById("cooldown_message").innerHTML = "";
+	}
+	else {
+		if(screen == "warmup"){
+			document.getElementById("warmup_message").innerHTML = "Let's warm up!"
+			document.getElementById("warmup_video").innerHTML = `<iframe width="560" height="315" src="https://www.youtube.com/embed/uab8B9L-5Ik?si=U2SAyi35V2edqHhc&autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe>`;
+		}
+		else{
+			document.getElementById("cooldown_message").innerHTML = "Great workout! Time for a cooldown."
+			document.getElementById("cooldown_video").innerHTML = `<iframe width="560" height="315" src="https://www.youtube.com/embed/DTocZxGW6cs?si=zcUzDNV2ZihNDwi_&amp;start=112&autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe>`;
+		}
+	}
 }
 
 $('#upper').click(function() {

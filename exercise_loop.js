@@ -77,7 +77,7 @@ function increment_exercise_or_set(){
 			current_exercise['exercise_image_url'] = workout_plan[current_exercise['exercise_index']]['exercise_image'];
 		}
 		else {
-			populate_end_screen();
+			start_cooldown();
 		}
 	}
 }
