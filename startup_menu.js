@@ -24,6 +24,7 @@ var workout_config = {
 	// valid_exercise_types_top_level - list of top-level exercise types (e.g. upper, lower) that are valid for this configuration
 	// valid_exercise_types_sub_level - list of sub-level exercise types (e.g. chest, calves) that are valid for this configuration
 };
+var mode = "";
 
 // data processing
 function capture_workout_choices() {
@@ -181,6 +182,7 @@ function process_choices() {
 	var parsed_data = parse_exercise_csv(raw_data);
 	if(parsed_data != "errors encountered") {
 		document.getElementById("workout_configuration").innerHTML="";
+		document.getElementById("mode_choice").innerHTML="";
 		design_workout(parsed_data);
 		current_exercise = {
 			'exercise_index': 0,
@@ -223,4 +225,31 @@ function start_main_workout() {
 	clearInterval(interval);
 	populate_countdown_screen();
 	countdown_loop();
+}
+
+// stretching
+
+function process_stretch_choices() {
+	if(uploaded_data) {
+		var raw_data = uploaded_data;
+	}
+	else {
+		var raw_data = read_exercise_csv("https://raw.githubusercontent.com/rachelwigell/exercise_app/main/stretches.csv");
+	}
+	workout_plan = parse_stretch_csv(raw_data);
+	workout_config['exercise_count'] = workout_plan.length;
+	workout_config['set_count'] = 1;
+	workout_config['rest_time'] = 0;
+
+	document.getElementById("stretch_configuration").innerHTML="";
+	document.getElementById("mode_choice").innerHTML="";
+	current_exercise = {
+		'exercise_index': 0,
+		'exercise_name': workout_plan[0]['stretch_name'],
+		'set_index': 1,
+		'working_time_remaining': workout_plan[0]['stretch_length_seconds'],
+		'rest_time_remaining': COUNTDOWN_LENGTH,
+		'exercise_image_url': undefined
+	}
+	start_main_workout();
 }

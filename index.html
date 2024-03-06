@@ -9,6 +9,28 @@
 </head>
 
 <body>
+	<div id="mode_choice" meta name="viewport" content="width=device-width, initial-scale=1">
+		<b><label for="mode">Mode:</label></b>
+		<div>
+			<input type="radio" id="workout_mode" name="mode" value="workout_mode" onChange="set_mode('workout')" checked>
+			<label for="workout_mode">Work out</label>
+		</div>
+		<div>
+			<input type="radio" id="stretch_mode" name="mode" value="stretch_mode" onChange="set_mode('stretch')">
+			<label for="stretch_mode">Stretch (beta)</label>
+		</div>
+		<br>
+	</div>
+	<div id="stretch_configuration" meta name="viewport" content="width=device-width, initial-scale=1" style="display:none">
+		<div>
+			<label for="csv_upload">Upload stretch routine CSV (optional):</label><br>
+		  	<input id="csv_upload" name="files[]" multiple="" type="file" onChange="read_uploaded_file(this)"/>
+		</div>
+		<br>
+		<div>
+	  		<button type="button" id="start_workout" onClick="process_stretch_choices()"><h1>Start</h1></button>
+	  	</div>
+	</div>
 	<div id="workout_configuration" meta name="viewport" content="width=device-width, initial-scale=1">
 		<b><label for="stretching">Include:</label></b>
 		<div>

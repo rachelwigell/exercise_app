@@ -11,6 +11,8 @@ function read_uploaded_file(element) {
     reader.readAsText(element.files[0]);
 }
 
+// workout CSVs
+
 function read_exercise_csv(csv_url) {
 	var data = $.ajax({
         type: "GET",
@@ -114,3 +116,15 @@ function set_error_message(message) {
 	document.getElementById("error_messages").innerHTML="Error encountered parsing your CSV: " + message;
 }
 
+// stretch routine csvs
+
+function parse_stretch_csv(raw_data) {
+	var parsed_data = raw_data.split('\n');
+	for(var i=0; i<parsed_data.length; i++) {
+		var row = parsed_data[i].split(',')
+		var stretch_name = row[0];
+		var stretch_length_seconds = row[1];
+		parsed_data[i] = {'stretch_name': stretch_name, 'stretch_length_seconds': stretch_length_seconds};
+	}
+	return parsed_data;
+}

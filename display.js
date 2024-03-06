@@ -34,16 +34,10 @@ function populate_exercise_screen() {
 	var working_time_remaining = current_exercise['working_time_remaining'];
 	var workout_header = `${exercise_name} (set ${set_index})`;
 	var exercise_image_url = current_exercise['exercise_image_url'];
-	if(exercise_image_url == undefined){
-		var exercise_image_htl = "";
-	}
-	else {
-		var exercise_image_html = `<img src="${exercise_image_url}">`;
-	}
 
 	document.getElementById("message").innerHTML="It's go time!";
 	document.getElementById("exercise_name").innerHTML=workout_header;
-	document.getElementById("exercise_image").innerHTML=exercise_image_html;
+	document.getElementById("exercise_image").innerHTML=image_html(exercise_image_url);
 	document.getElementById("countdown").innerHTML=progress_bar_html(value_to_percentage('exercise'));
 	document.getElementById("workout_progress").innerHTML=progress_bar_html(value_to_percentage('workout'));
 	switch_button("pause_workout");
@@ -103,7 +97,7 @@ function populate_countdown_screen(){
 	var next_exercise_name = current_exercise['exercise_name']
 	var rest_time_remaining = current_exercise['rest_time_remaining']
 	var exercise_image_url = current_exercise['exercise_image_url'];
-	var exercise_image_html = `<img src="${exercise_image_url}">`;
+	var exercise_image_html = image_html(exercise_image_url);
 
 	document.getElementById("message").innerHTML="Get ready to start! Your first exercise will be...";
 	document.getElementById("exercise_name").innerHTML=next_exercise_name;
@@ -165,3 +159,19 @@ $('#core').click(function() {
         $('#back').attr('checked', false);
     }
 });
+
+// stretches
+
+function set_mode(chosen_mode){
+	if(chosen_mode == "workout"){
+		document.getElementById("workout_configuration").style.display = "";
+		document.getElementById("stretch_configuration").style.display = "none";
+		mode = "workout";
+	}
+	else {
+		document.getElementById("workout_configuration").style.display = "none";
+		document.getElementById("stretch_configuration").style.display = "";
+		mode = "stretch";
+	}
+}
+

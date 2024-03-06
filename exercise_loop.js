@@ -1,4 +1,4 @@
-var COUNTDOWN_LENGTH = 10;
+var COUNTDOWN_LENGTH = 3;
 var current_exercise = {
 	// keys:
 	// exercise_name
@@ -23,10 +23,20 @@ function update_exercise(){
 		play_bell_sound();
 		clearInterval(interval);
 		clear_screen();
-		increment_exercise_or_set();
+		if(mode == "stretch"){
+			increment_stretch();
+		}
+		else{
+			increment_exercise_or_set();
+		}
 		if(current_exercise['exercise_index'] < workout_config['exercise_count']) {
-			populate_rest_screen();
-			rest_loop();
+			if(mode == "stretch"){
+				update_rest();	
+			}
+			else {
+				populate_rest_screen();
+				rest_loop();
+			}
 		}
 	}
 }
@@ -79,5 +89,21 @@ function increment_exercise_or_set(){
 		else {
 			start_cooldown();
 		}
+	}
+}
+
+// stretches
+
+function increment_stretch(){
+	current_exercise['set_index'] = 1;
+	current_exercise['exercise_index'] += 1;
+	current_exercise['rest_time_remaining'] = 0;
+	if(current_exercise['exercise_index'] < workout_config['exercise_count']) {
+		current_exercise['working_time_remaining'] = workout_plan[current_exercise['exercise_index']]['stretch_length_seconds'];
+		current_exercise['exercise_name'] = workout_plan[current_exercise['exercise_index']]['stretch_name'];
+		current_exercise['exercise_image_url'] = undefined;
+	}
+	else {
+		start_cooldown();
 	}
 }

@@ -27,7 +27,12 @@ function random_range(min, max) {
 
 function value_to_percentage(progress_type) {
 	if(progress_type == 'exercise') {
-		var max_value = workout_config['working_time'];
+		if(mode == "stretch"){
+			var max_value = workout_plan[current_exercise['exercise_index']]['stretch_length_seconds']
+		}
+		else{
+			var max_value = workout_config['working_time'];
+		}
 		var current_value = current_exercise['working_time_remaining']-1;
 		current_value = max_value-current_value;
 	}
@@ -66,3 +71,12 @@ function array_intersection(arr1, arr2) {
     }
     return intersection; 
 } 
+
+function image_html(exercise_image_url){
+	if(exercise_image_url == undefined){
+		return exercise_image_html = "";
+	}
+	else {
+		return exercise_image_html = `<img src="${exercise_image_url}">`;
+	}
+}
