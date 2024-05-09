@@ -153,7 +153,7 @@ function design_workout(parsed_data) {
 		}
 	}
 
-	for(var execise_num=0; execise_num<exercise_count; execise_num++) {
+	for(var exercise_num=0; exercise_num<exercise_count; exercise_num++) {
 		// weighting to make the types equally likely
 		// start with picking top-level type
 		var chosen_top_level_type = valid_exercise_types_top_level[random_range(0, valid_exercise_types_top_level.length)];
@@ -171,33 +171,76 @@ function design_workout(parsed_data) {
 	}
 }
 
+function design_pt_workout(parsed_data) {
+	var exercise_count = workout_config['exercise_count'];
+
+	var valid_workouts = [];
+	var valid_workouts_consumable = [];
+
+	for(var row_index=0; row_index<parsed_data.length; row_index++){
+			valid_workouts.push(parsed_data[row_index]);
+			valid_workouts_consumable.push(parsed_data[row_index]);
+	}
+
+	for(var exercise_num=0; exercise_num<exercise_count; exercise_num++) {
+		var chosen_index = random_range(0, valid_workouts_consumable.length);
+		var chosen_workout = valid_workouts_consumable[chosen_index];
+		if(chosen_workout['exercise_sidedness']){
+			chosen_workout_copy = deep_copy_hash(chosen_workout);
+			chosen_workout_copy['exercise_name'] += ' (left)'
+			workout_plan.push(chosen_workout_copy)
+			chosen_workout['exercise_name'] += ' (right)'
+			workout_plan.push(chosen_workout)
+		}
+		else {
+			workout_plan.push(chosen_workout);
+		}
+		valid_workouts_consumable.splice(chosen_index, 1);
+		
+		if(valid_workouts_consumable.length == 0) {
+			valid_workouts_consumable = deep_copy(valid_workouts);
+		}
+	}
+}
+
 function process_choices() {
 	capture_workout_choices();
 	if(uploaded_data) {
 		var raw_data = uploaded_data;
 	}
 	else {
-		var raw_data = read_exercise_csv("https://raw.githubusercontent.com/rachelwigell/exercise_app/main/exercises.csv");
+		if(mode == "workout") {
+			var raw_data = read_exercise_csv("https://raw.githubusercontent.com/rachelwigell/exercise_app/main/exercises.csv");
+		}
+		else if(mode == "PT") {
+			var raw_data = read_exercise_csv("https://raw.githubusercontent.com/rachelwigell/exercise_app/main/PT.csv");
+		}
 	}
 	var parsed_data = parse_exercise_csv(raw_data);
 	if(parsed_data != "errors encountered") {
 		document.getElementById("workout_configuration").innerHTML="";
 		document.getElementById("mode_choice").innerHTML="";
-		design_workout(parsed_data);
+		if(mode == "workout") {
+			design_workout(parsed_data);
+		}
+		else if(mode == "PT") {
+			design_pt_workout(parsed_data);
+		}
 		current_exercise = {
 			'exercise_index': 0,
 			'exercise_name': workout_plan[0]['exercise_name'],
 			'set_index': 1,
 			'working_time_remaining': workout_config['working_time'],
-			'rest_time_remaining': COUNTDOWN_LENGTH,
-			'exercise_image_url': workout_plan[0]['exercise_image']
+			'rest_time_remaining': COUNTDOWN_LENGTH+setup_time(),
+			'exercise_image_url': workout_plan[0]['exercise_image'],
+			'exercise_note': workout_plan[0]['exercise_note']
 		}
 		start_warmup();
 	}
 }
 
 function start_warmup() {	
-	if(workout_config["include_warmup"]){
+	if(workout_config["include_warmup"] && mode != "PT"){
 		update_warmup_cooldown_screen("warmup", "populate");
 		warmup_end();
 	}
@@ -211,7 +254,7 @@ function start_cooldown() {
 	document.getElementById("skip_button").innerHTML="";
 	document.getElementById("workout_progress").innerHTML="";
 
-	if(workout_config["include_cooldown"]){
+	if(workout_config["include_cooldown"] && mode != "PT"){
 		update_warmup_cooldown_screen("cooldown", "populate");
 		cooldown_end();
 	}
@@ -249,7 +292,8 @@ function process_stretch_choices() {
 		'set_index': 1,
 		'working_time_remaining': workout_plan[0]['stretch_length_seconds'],
 		'rest_time_remaining': COUNTDOWN_LENGTH,
-		'exercise_image_url': undefined
+		'exercise_image_url': undefined,
+		'exercise_note': ""
 	}
 	start_main_workout();
 }

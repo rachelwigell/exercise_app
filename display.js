@@ -30,9 +30,10 @@ function show_working_and_total_time() {
 
 function populate_exercise_screen() {
 	var exercise_name = current_exercise['exercise_name'];
+	var exercise_note = current_exercise['exercise_note']
 	var set_index = current_exercise['set_index'];
 	var working_time_remaining = current_exercise['working_time_remaining'];
-	var workout_header = `${exercise_name} (set ${set_index})`;
+	var workout_header = `${exercise_name} (set ${set_index}) ${exercise_note}`;
 	var exercise_image_url = current_exercise['exercise_image_url'];
 
 	document.getElementById("message").innerHTML="It's go time!";
@@ -45,15 +46,15 @@ function populate_exercise_screen() {
 
 function populate_rest_screen() {
 	var next_exercise_name = current_exercise['exercise_name']
+	var exercise_note = current_exercise['exercise_note']
 	var set_index = current_exercise['set_index']
 	var rest_time_remaining = current_exercise['rest_time_remaining']
-	var workout_header = `Next exercise: ${next_exercise_name} (set ${set_index})`
+	var workout_header = `Next exercise: ${next_exercise_name} (set ${set_index}) ${exercise_note}`
 	var exercise_image_url = current_exercise['exercise_image_url'];
-	var exercise_image_html = `<img src="${exercise_image_url}">`;
 
 	document.getElementById("message").innerHTML="Rest time! Grab some water.";
 	document.getElementById("exercise_name").innerHTML=workout_header;
-	document.getElementById("exercise_image").innerHTML=exercise_image_html;
+	document.getElementById("exercise_image").innerHTML=image_html(exercise_image_url);
 	document.getElementById("countdown").innerHTML=progress_bar_html(value_to_percentage('rest'));
 	switch_button("pause_rest");
 }
@@ -166,12 +167,27 @@ function set_mode(chosen_mode){
 	if(chosen_mode == "workout"){
 		document.getElementById("workout_configuration").style.display = "";
 		document.getElementById("stretch_configuration").style.display = "none";
+		document.getElementById("warmup_cooldown_config").style.display = "";
+		document.getElementById("areas_config").style.display = "";
 		mode = "workout";
 	}
-	else {
+	else if(chosen_mode == "stretch") {
 		document.getElementById("workout_configuration").style.display = "none";
 		document.getElementById("stretch_configuration").style.display = "";
+		document.getElementById("pt_configuration").style.display = "none";
+		document.getElementById("warmup_cooldown_config").style.display = "";
+		document.getElementById("areas_config").style.display = "";
 		mode = "stretch";
+	}
+	else if(chosen_mode == "PT"){
+		document.getElementById("workout_configuration").style.display = "";
+		document.getElementById("stretch_configuration").style.display = "none";
+		document.getElementById("warmup_cooldown_config").style.display = "none";
+		document.getElementById("areas_config").style.display = "none";
+		document.getElementById("set_count").value = 3;
+		document.getElementById("working_time").value = 30;
+		document.getElementById("rest_time").value = 10;
+		mode = "PT";
 	}
 }
 

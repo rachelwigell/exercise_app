@@ -19,6 +19,11 @@
 			<input type="radio" id="stretch_mode" name="mode" value="stretch_mode" onChange="set_mode('stretch')">
 			<label for="stretch_mode">Stretch (beta)</label>
 		</div>
+		<div>
+			<input type="radio" id="pt_mode" name="mode" value="pt_mode" onChange="set_mode('PT')">
+			<label for="pt_mode">Physical Therapy (beta)</label>
+			<div><ul><li>I am not a physical therapist and this isn't medical advice. These are just exercises that I was assigned while I was in physical therapy for lower back pain. I've developed this mode to help me continue my practice at home.</li></ul></div>
+		</div>
 		<br>
 	</div>
 	<div id="stretch_configuration" meta name="viewport" content="width=device-width, initial-scale=1" style="display:none">
@@ -32,67 +37,71 @@
 	  	</div>
 	</div>
 	<div id="workout_configuration" meta name="viewport" content="width=device-width, initial-scale=1">
-		<b><label for="stretching">Include:</label></b>
-		<div>
-		  <input type="checkbox" id="warmup" name="stretching" value="warmup" onChange="show_working_and_total_time()" checked>
-		  <label for="warmup">Warmup</label>
-		</div>
-		<div>
-		  <input type="checkbox" id="cooldown" name="stretching" value="cooldown" onChange="show_working_and_total_time()" checked>
-		  <label for="cooldown">Cooldown</label>
+		<div id="warmup_cooldown_config">
+			<b><label for="stretching">Include:</label></b>
+			<div>
+			  <input type="checkbox" id="warmup" name="stretching" value="warmup" onChange="show_working_and_total_time()" checked>
+			  <label for="warmup">Warmup</label>
+			</div>
+			<div>
+			  <input type="checkbox" id="cooldown" name="stretching" value="cooldown" onChange="show_working_and_total_time()" checked>
+			  <label for="cooldown">Cooldown</label>
+			</div>
 		</div>
 		<br>
-		<b><label for="workout_type">Areas to work</label></b>
-		<div>
-		  <input type="checkbox" id="upper" name="workout_type" value="upper" checked>
-		  <label for="upper">Upper</label>
-		</div>
-		<div>
-		  <input style="margin-left: 25px;" type="checkbox" id="chest" name="workout_type" value="chest" checked>
-		  <label for="chest">Chest</label>
-		</div>
-		<div>
-		  <input style="margin-left: 25px;" type="checkbox" id="shoulders" name="workout_type" value="shoulders" checked>
-		  <label for="shoulders">Shoulders</label>
-		</div>
-		<div>
-		  <input style="margin-left: 25px;" type="checkbox" id="biceps" name="workout_type" value="biceps" checked>
-		  <label for="biceps">Biceps</label>
-		</div>
-		<div>
-		  <input style="margin-left: 25px;" type="checkbox" id="triceps" name="workout_type" value="triceps" checked>
-		  <label for="triceps">Triceps</label>
-		</div>
-		<div>
-		  <input style="margin-left: 25px;" type="checkbox" id="forearms" name="workout_type" value="forearms" checked>
-		  <label for="forearms">Forearms</label>
-		</div>
+		<div id="areas_config">
+			<b><label for="workout_type">Areas to work</label></b>
+			<div>
+			  <input type="checkbox" id="upper" name="workout_type" value="upper" checked>
+			  <label for="upper">Upper</label>
+			</div>
+			<div>
+			  <input style="margin-left: 25px;" type="checkbox" id="chest" name="workout_type" value="chest" checked>
+			  <label for="chest">Chest</label>
+			</div>
+			<div>
+			  <input style="margin-left: 25px;" type="checkbox" id="shoulders" name="workout_type" value="shoulders" checked>
+			  <label for="shoulders">Shoulders</label>
+			</div>
+			<div>
+			  <input style="margin-left: 25px;" type="checkbox" id="biceps" name="workout_type" value="biceps" checked>
+			  <label for="biceps">Biceps</label>
+			</div>
+			<div>
+			  <input style="margin-left: 25px;" type="checkbox" id="triceps" name="workout_type" value="triceps" checked>
+			  <label for="triceps">Triceps</label>
+			</div>
+			<div>
+			  <input style="margin-left: 25px;" type="checkbox" id="forearms" name="workout_type" value="forearms" checked>
+			  <label for="forearms">Forearms</label>
+			</div>
 
 
-		<div>
-		  <input type="checkbox" id="lower" name="workout_type" value="lower" checked>
-		  <label for="lower">Lower</label>
-		</div>
-		<div>
-		  <input style="margin-left: 25px;" type="checkbox" id="thighs" name="workout_type" value="thighs" checked>
-		  <label for="thighs">Thighs</label>
-		</div>
-		<div>
-		  <input style="margin-left: 25px;" type="checkbox" id="calves" name="workout_type" value="calves" checked>
-		  <label for="calves">Calves</label>
-		</div>
+			<div>
+			  <input type="checkbox" id="lower" name="workout_type" value="lower" checked>
+			  <label for="lower">Lower</label>
+			</div>
+			<div>
+			  <input style="margin-left: 25px;" type="checkbox" id="thighs" name="workout_type" value="thighs" checked>
+			  <label for="thighs">Thighs</label>
+			</div>
+			<div>
+			  <input style="margin-left: 25px;" type="checkbox" id="calves" name="workout_type" value="calves" checked>
+			  <label for="calves">Calves</label>
+			</div>
 
-		<div>
-		  <input type="checkbox" id="core" name="workout_type" value="core" checked>
-		  <label for="core">Core</label>
-		</div>
-		<div>
-		  <input style="margin-left: 25px;" type="checkbox" id="abs" name="workout_type" value="abs" checked>
-		  <label for="abs">Abs</label>
-		</div>
-		<div>
-		  <input style="margin-left: 25px;" type="checkbox" id="back" name="workout_type" value="back" checked>
-		  <label for="back">Back</label>
+			<div>
+			  <input type="checkbox" id="core" name="workout_type" value="core" checked>
+			  <label for="core">Core</label>
+			</div>
+			<div>
+			  <input style="margin-left: 25px;" type="checkbox" id="abs" name="workout_type" value="abs" checked>
+			  <label for="abs">Abs</label>
+			</div>
+			<div>
+			  <input style="margin-left: 25px;" type="checkbox" id="back" name="workout_type" value="back" checked>
+			  <label for="back">Back</label>
+			</div>
 		</div>
 
 		<br>

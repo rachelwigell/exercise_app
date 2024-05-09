@@ -29,7 +29,7 @@ function update_exercise(){
 		else{
 			increment_exercise_or_set();
 		}
-		if(current_exercise['exercise_index'] < workout_config['exercise_count']) {
+		if(current_exercise['exercise_index'] < workout_plan.length) {
 			if(mode == "stretch"){
 				update_rest();	
 			}
@@ -81,10 +81,11 @@ function increment_exercise_or_set(){
 		current_exercise['set_index'] = 1;
 		current_exercise['exercise_index'] += 1;
 		current_exercise['working_time_remaining'] = workout_config['working_time'];
-		current_exercise['rest_time_remaining'] = workout_config['rest_time'];
-		if(current_exercise['exercise_index'] < workout_config['exercise_count']) {
+		current_exercise['rest_time_remaining'] = parseInt(workout_config['rest_time'])+setup_time();
+		if(current_exercise['exercise_index'] < workout_plan.length) {
 			current_exercise['exercise_name'] = workout_plan[current_exercise['exercise_index']]['exercise_name'];
 			current_exercise['exercise_image_url'] = workout_plan[current_exercise['exercise_index']]['exercise_image'];
+			current_exercise['exercise_note'] = workout_plan[current_exercise['exercise_index']]['exercise_note'];
 		}
 		else {
 			start_cooldown();
@@ -102,6 +103,7 @@ function increment_stretch(){
 		current_exercise['working_time_remaining'] = workout_plan[current_exercise['exercise_index']]['stretch_length_seconds'];
 		current_exercise['exercise_name'] = workout_plan[current_exercise['exercise_index']]['stretch_name'];
 		current_exercise['exercise_image_url'] = undefined;
+		current_exercise['exercise_note'] = "";
 	}
 	else {
 		start_cooldown();

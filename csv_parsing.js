@@ -52,20 +52,24 @@ function parse_csv_row(row, index) {
 		parsed_row['exercise_name'] = exercise_name;
 	}
 
-	var exercise_type = parse_csv_item(row[1], 'exercise_type');
-	if(exercise_type == 'item missing') {
-		set_error_message("Exercise type missing on row " + index+1);
-		errors_encountered = true;
-	}
-	else if(exercise_type == 'item malformed') {
-		set_error_message("Exercise type is invalid on row " + index+1 + ". Should be one of: abs, back, thighs, calves, chest, biceps, triceps, shoulders, or forearms");
-		errors_encountered = true;
-	}
-	else {
-		parsed_row['exercise_type'] = exercise_type;
+	if(mode != "PT") {
+		var exercise_type = parse_csv_item(row[1], 'exercise_type');
+		if(exercise_type == 'item missing') {
+			set_error_message("Exercise type missing on row " + index+1);
+			errors_encountered = true;
+		}
+		else if(exercise_type == 'item malformed') {
+			set_error_message("Exercise type is invalid on row " + index+1 + ". Should be one of: abs, back, thighs, calves, chest, biceps, triceps, shoulders, or forearms");
+			errors_encountered = true;
+		}
+		else {
+			parsed_row['exercise_type'] = exercise_type;
+		}
 	}
 
 	parsed_row['exercise_image'] = parse_csv_item(row[2], 'exercise_image');
+	parsed_row['exercise_sidedness'] = parse_csv_item(row[3], 'exercise_sidedness');
+	parsed_row['exercise_note'] = parse_csv_item(row[4], 'exercise_note');
 
 	if(errors_encountered) {
 		return 'errors encountered';
@@ -107,6 +111,24 @@ function parse_csv_item(item, item_type) {
 			return undefined;
 		}
 		else {
+			return item;
+		}
+	}
+
+	if(item_type == "exercise_sidedness") {
+		if(item == undefined || item == 'false') {
+			return false;
+		}
+		else {
+			return true;
+		}
+	}
+
+	if(item_type == "exercise_note") {
+		if(item == undefined) {
+			return "";
+		}
+		else{
 			return item;
 		}
 	}
