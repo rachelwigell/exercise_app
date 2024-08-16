@@ -24,7 +24,7 @@ var workout_config = {
 	// valid_exercise_types_top_level - list of top-level exercise types (e.g. upper, lower) that are valid for this configuration
 	// valid_exercise_types_sub_level - list of sub-level exercise types (e.g. chest, calves) that are valid for this configuration
 };
-var mode = "";
+var mode = "workout";
 
 // data processing
 function capture_workout_choices() {

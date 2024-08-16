@@ -169,6 +169,9 @@ function set_mode(chosen_mode){
 		document.getElementById("stretch_configuration").style.display = "none";
 		document.getElementById("warmup_cooldown_config").style.display = "";
 		document.getElementById("areas_config").style.display = "";
+		document.getElementById("set_count").value = 2;
+		document.getElementById("working_time").value = 45;
+		document.getElementById("rest_time").value = 20;
 		mode = "workout";
 	}
 	else if(chosen_mode == "stretch") {
