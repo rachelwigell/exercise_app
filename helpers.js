@@ -70,7 +70,7 @@ function play_bell_sound() {
 	// audio.play();
 	var audioContext = new (window.AudioContext || window.webkitAudioContext)();
 	var request = new XMLHttpRequest();
-	request.open('GET', 'asserts/bell.wav', true);
+	request.open('GET', 'assets/bell.wav', true);
 	request.responseType = 'arraybuffer';
 
 	request.onload = function() {
