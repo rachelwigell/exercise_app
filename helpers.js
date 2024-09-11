@@ -113,3 +113,28 @@ function setup_time(){
 	if(mode == "PT") { return 15; }
 	else { return 0; }
 }
+
+function generate_single_exercise_plan_string(exercise_config, set_count) {
+	var html_string = "";
+	var exercise_name = exercise_config["exercise_name"];
+	var exercise_image = exercise_config["exercise_image"];
+
+	html_string += set_count + " sets of " + exercise_name + ": " + image_html(exercise_image) + "<br>"
+	return html_string;
+}
+
+function generate_workout_plan_string() {
+	var sets = workout_config["set_count"]
+
+	var plan_string = "Here's your exercise plan!<br><br>"
+	if(workout_config["include_warmup"]) {
+		plan_string += "Warm up with a quick dynamic stretch.<br>"
+	}
+	for(var i=0; i<workout_plan.length; i++) {
+		plan_string += generate_single_exercise_plan_string(workout_plan[i], sets);
+	}
+	if(workout_config["include_cooldown"]) {
+		plan_string += "Cool down with some static stretches.<br>"
+	}
+	return plan_string;
+}

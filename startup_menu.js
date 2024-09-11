@@ -84,6 +84,7 @@ function capture_workout_choices() {
 	workout_config['valid_exercise_types_sub_level'] = valid_exercise_types_sub_level;
 	workout_config['include_warmup'] = document.getElementById("warmup").checked;
 	workout_config['include_cooldown'] = document.getElementById("cooldown").checked;
+	workout_config['plan_only'] = document.getElementById("plan_only").checked;
 }
 
 function design_workout(parsed_data) {
@@ -235,7 +236,12 @@ function process_choices() {
 			'exercise_image_url': workout_plan[0]['exercise_image'],
 			'exercise_note': workout_plan[0]['exercise_note']
 		}
-		start_warmup();
+		if(workout_config['plan_only']){
+			populate_plan_screen();
+		}
+		else {
+			start_warmup();
+		}
 	}
 }
 

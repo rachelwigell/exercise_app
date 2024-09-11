@@ -24,6 +24,10 @@
 			<label for="pt_mode">Physical Therapy (beta)</label>
 			<div><ul><li>I am not a physical therapist and this isn't medical advice. These are just exercises that I was assigned while I was in physical therapy for lower back pain. I've developed this mode to help me continue my practice at home.</li></ul></div>
 		</div>
+		<div>
+			<input type="checkbox" id="plan_only" name="plan_only" value="plan_only">
+			  <label for="plan_only">Plan-only</label>
+		</div>
 		<br>
 	</div>
 	<div id="stretch_configuration" meta name="viewport" content="width=device-width, initial-scale=1" style="display:none">
@@ -144,6 +148,8 @@
 
 		<div id="error_messages" style="color: red;"></div>
 	</div>
+
+	<div id="plans"></div>
 
 	<div id="warmup_screen" meta name="viewport" content="width=device-width, initial-scale=1">
 		<h2><div id="warmup_message"></div></h2>

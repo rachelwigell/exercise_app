@@ -163,6 +163,10 @@ $('#core').click(function() {
     }
 });
 
+function populate_plan_screen() {
+	document.getElementById("plans").innerHTML = generate_workout_plan_string();
+}
+
 // stretches
 
 function set_mode(chosen_mode){
