@@ -66,8 +66,25 @@ function value_to_percentage(progress_type) {
 }
 
 function play_bell_sound() {
-	var audio = new Audio('bell.wav');
-	audio.play();
+	// var audio = new Audio('assets/bell.wav');
+	// audio.play();
+	var audioContext = new (window.AudioContext || window.webkitAudioContext)();
+	var request = new XMLHttpRequest();
+	request.open('GET', 'asserts/bell.wav', true);
+	request.responseType = 'arraybuffer';
+
+	request.onload = function() {
+	var audioData = request.response;
+
+	audioContext.decodeAudioData(audioData, function(buffer) {
+			var source = audioContext.createBufferSource();
+			source.buffer = buffer;
+			source.connect(audioContext.destination);
+			source.start(0);
+		});
+	};
+
+	request.send();
 }
 
 function progress_bar_html(value) {

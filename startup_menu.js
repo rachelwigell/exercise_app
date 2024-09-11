@@ -210,10 +210,10 @@ function process_choices() {
 	}
 	else {
 		if(mode == "workout") {
-			var raw_data = read_exercise_csv("https://raw.githubusercontent.com/rachelwigell/exercise_app/main/exercises.csv");
+			var raw_data = read_exercise_csv("https://raw.githubusercontent.com/rachelwigell/exercise_app/main/assets/exercises.csv");
 		}
 		else if(mode == "PT") {
-			var raw_data = read_exercise_csv("https://raw.githubusercontent.com/rachelwigell/exercise_app/main/PT.csv");
+			var raw_data = read_exercise_csv("https://raw.githubusercontent.com/rachelwigell/exercise_app/main/assets/PT.csv");
 		}
 	}
 	var parsed_data = parse_exercise_csv(raw_data);
@@ -231,7 +231,7 @@ function process_choices() {
 			'exercise_name': workout_plan[0]['exercise_name'],
 			'set_index': 1,
 			'working_time_remaining': workout_config['working_time'],
-			'rest_time_remaining': COUNTDOWN_LENGTH+setup_time(),
+			'rest_time_remaining': COUNTDOWN_LENGTH,
 			'exercise_image_url': workout_plan[0]['exercise_image'],
 			'exercise_note': workout_plan[0]['exercise_note']
 		}
@@ -277,7 +277,7 @@ function process_stretch_choices() {
 		var raw_data = uploaded_data;
 	}
 	else {
-		var raw_data = read_exercise_csv("https://raw.githubusercontent.com/rachelwigell/exercise_app/main/stretches.csv");
+		var raw_data = read_exercise_csv("https://raw.githubusercontent.com/rachelwigell/exercise_app/main/assets/stretches.csv");
 	}
 	workout_plan = parse_stretch_csv(raw_data);
 	workout_config['exercise_count'] = workout_plan.length;
