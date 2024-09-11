@@ -66,8 +66,6 @@ function value_to_percentage(progress_type) {
 }
 
 function play_bell_sound() {
-	// var audio = new Audio('assets/bell.wav');
-	// audio.play();
 	var audioContext = new (window.AudioContext || window.webkitAudioContext)();
 	var request = new XMLHttpRequest();
 	request.open('GET', 'assets/bell.wav', true);

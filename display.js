@@ -104,6 +104,8 @@ function populate_countdown_screen(){
 	document.getElementById("exercise_name").innerHTML=next_exercise_name;
 	document.getElementById("exercise_image").innerHTML=exercise_image_html;
 	document.getElementById("countdown").innerHTML=rest_time_remaining;
+	document.getElementById("countdown").innerHTML += "<br>";
+	document.getElementById("countdown").innerHTML += '<button type="button" id="skip_button" onClick="skip_countdown()"><h1>Skip &gt;&gt;</h1></button>';
 }
 
 function update_warmup_cooldown_screen(screen, action){

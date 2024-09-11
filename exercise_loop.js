@@ -1,4 +1,4 @@
-var COUNTDOWN_LENGTH = 10;
+var COUNTDOWN_LENGTH = 20;
 var current_exercise = {
 	// keys:
 	// exercise_name

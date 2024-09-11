@@ -51,3 +51,9 @@ function skip_rest() {
 	resume_rest();
 	populate_rest_screen();
 }
+
+function skip_countdown() {
+	current_exercise['rest_time_remaining'] = 0;
+	clearInterval(interval);
+	update_countdown();
+}
