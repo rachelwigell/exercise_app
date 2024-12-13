@@ -7,12 +7,13 @@ var SUB_TO_TOP_LEVEL_MAPPING = {
 	"thighs": "lower",
 	"calves": "lower",
 	"abs": "core",
-	"back": "core"
+	"back": "core",
+	"glutes": "core"
 }
 var TOP_TO_SUB_LEVEL_MAPPING = {
 	"upper": ["chest", "shoulders", "biceps", "triceps", "forearms"],
 	"lower": ["thighs", "calves"],
-	"core": ["abs", "back"]
+	"core": ["abs", "back", "glutes"]
 }
 var workout_plan = [];
 var workout_config = {
@@ -70,6 +71,10 @@ function capture_workout_choices() {
 	if(document.getElementById("back").checked) {
 		valid_exercise_types_top_level = valid_exercise_types_top_level.concat('core')
 		valid_exercise_types_sub_level = valid_exercise_types_sub_level.concat('back');
+	}
+	if(document.getElementById("glutes").checked) {
+		valid_exercise_types_top_level = valid_exercise_types_top_level.concat('core')
+		valid_exercise_types_sub_level = valid_exercise_types_sub_level.concat('glutes');
 	}
 
 	// deduplicate
@@ -143,6 +148,10 @@ function design_workout(parsed_data) {
 	if(valid_exercise_types_sub_level.includes("back")) {
 		valid_workouts["core"]["back"] = [];
 		valid_workouts_consumable["core"]["back"] = [];
+	}
+	if(valid_exercise_types_sub_level.includes("glutes")) {
+		valid_workouts["core"]["glutes"] = [];
+		valid_workouts_consumable["core"]["glutes"] = [];
 	}
 	
 	for(var row_index=0; row_index<parsed_data.length; row_index++){

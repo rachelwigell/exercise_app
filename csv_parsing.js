@@ -59,7 +59,7 @@ function parse_csv_row(row, index) {
 			errors_encountered = true;
 		}
 		else if(exercise_type == 'item malformed') {
-			set_error_message("Exercise type is invalid on row " + index+1 + ". Should be one of: abs, back, thighs, calves, chest, biceps, triceps, shoulders, or forearms");
+			set_error_message("Exercise type is invalid on row " + index+1 + ". Should be one of: abs, back, glutes, thighs, calves, chest, biceps, triceps, shoulders, or forearms");
 			errors_encountered = true;
 		}
 		else {
@@ -95,10 +95,11 @@ function parse_csv_item(item, item_type) {
 			return 'item missing';
 		}
 		else if(![
-				"abs", "back",
+				"abs", "back", "glutes",
 				"thighs", "calves",
 				"chest", "shoulders", "forearms", "biceps", "triceps"
 			].includes(item)) {
+			console.log(item);
 			return 'item malformed';
 		}
 		else {

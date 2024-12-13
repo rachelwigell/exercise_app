@@ -157,9 +157,11 @@ $('#core').click(function() {
     if ($(this).is(':checked')) {
         $('#abs').attr('checked', true);
         $('#back').attr('checked', true);
+        $('#glutes').attr('checked', true);
     } else {
         $('#abs').attr('checked', false);
         $('#back').attr('checked', false);
+        $('#glutes').attr('checked', false);
     }
 });
 
