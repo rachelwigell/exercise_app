@@ -295,9 +295,11 @@ function process_stretch_choices() {
 		var raw_data = read_exercise_csv("https://raw.githubusercontent.com/rachelwigell/exercise_app/main/assets/stretches.csv");
 	}
 	workout_plan = parse_stretch_csv(raw_data);
+	console.log(workout_plan);
 	workout_config['exercise_count'] = workout_plan.length;
 	workout_config['set_count'] = 1;
 	workout_config['rest_time'] = 0;
+	console.log(workout_config);
 
 	document.getElementById("stretch_configuration").innerHTML="";
 	document.getElementById("mode_choice").innerHTML="";
@@ -311,4 +313,116 @@ function process_stretch_choices() {
 		'exercise_note': ""
 	}
 	start_main_workout();
+}
+
+// bike
+
+function design_bike_workout(difficulty, style, duration) {
+	BASE_REST_SPEED = 12;
+	BASE_CHALLENGE_SPEED = 15;
+
+	workout_plan = [];
+	
+	if(style == "frequent") {
+		// 1 minute warmup
+		// 1 minute long challenges separated by 2 minute long rests
+		// 1 minute cooldown
+		num_exercises = Math.floor(duration/3);
+		workout_config['exercise_count'] = num_exercises;
+		workout_config['working_time'] = 60;
+		workout_config['rest_time'] = 120;
+		workout_config['set_count'] = 1;
+
+		var speed_target = Math.floor(BASE_REST_SPEED + difficulty + random_range_continuous(-2, 1));
+		workout_plan.push({
+			"challenge_name": "warmup",
+			"challenge_speed_target": speed_target,
+			"rest_speed_target": speed_target
+		});
+
+		for(i=0; i<num_exercises; i++) {
+			var challenge_speed_target = Math.floor(BASE_CHALLENGE_SPEED + difficulty + random_range_continuous(-1, 1)*difficulty/2);
+			var rest_speed_target = Math.floor(BASE_REST_SPEED + difficulty + random_range_continuous(-1, 1));
+			var choice = random_range(0, 3);
+
+			if(choice == 0) {
+				workout_plan.push({
+					"challenge_name": "resistance",
+					"challenge_speed_target": challenge_speed_target,
+					"rest_speed_target": rest_speed_target
+				});
+			}
+			else if(choice == 1) {
+				workout_plan.push({
+					"challenge_name": "rpm",
+					"challenge_speed_target": challenge_speed_target,
+					"rest_speed_target": rest_speed_target
+				});
+			}
+			else {
+				workout_plan.push({
+					"challenge_name": "stand",
+					"challenge_speed_target": challenge_speed_target,
+					"rest_speed_target": rest_speed_target
+				});
+			}
+		}
+
+		var speed_target = Math.floor(BASE_REST_SPEED + difficulty + random_range_continuous(-2, 1));
+		workout_plan.push({
+			"challenge_name": "cooldown",
+			"challenge_speed_target": speed_target,
+			"rest_speed_target": speed_target
+		});
+	}
+	else {
+		// todo
+	}
+}
+
+function process_bike_choices() {
+	var difficulty = document.getElementById("bike_level").value*1;
+	var style = document.querySelector('input[name="bike_style"]:checked').value;
+	var duration = document.getElementById("bike_length").value;
+	design_bike_workout(difficulty, style, duration);
+
+	console.log(workout_plan);
+	console.log(workout_config);
+
+	document.getElementById("bike_configuration").innerHTML="";
+	document.getElementById("mode_choice").innerHTML="";
+	current_exercise = {
+		'exercise_index': 0,
+		'exercise_name': bike_display_text(true, workout_plan[0]),
+		'set_index': 1,
+		'working_time_remaining': workout_config["working_time"],
+		'rest_time_remaining': COUNTDOWN_LENGTH,
+		'exercise_image_url': undefined,
+		'exercise_note': "",
+		'config': workout_plan[0]
+	}
+	start_main_workout();
+}
+
+function bike_display_text(working, config) {
+	if(working) {
+		if(config["challenge_name"] == 'warmup') {
+			return "Let's warm up. Set resistance to a comfortable level, and try to maintain a speed of at least " + config["challenge_speed_target"] + ".";
+		}
+		else if(config["challenge_name"] == 'cooldown') {
+			return "Let's cool down. Set resistance to a comfortable level, and try to maintain a speed of at least " + config["challenge_speed_target"] + ".";
+		}
+		else if(config["challenge_name"] == 'resistance') {
+			return "Raise the resistance and try to maintain a speed of at least " + config["challenge_speed_target"] + ".";
+		}
+		else if(config["challenge_name"] == 'rpm') {
+			return "Keep resistance low, and try to maintain a speed of at least " + config["challenge_speed_target"] + " by raising your RPM.";
+		}
+		else {
+			return "Stand up! Try to maintain a speed of at least " + config["challenge_speed_target"] + ".";
+		}
+	}
+	else {
+		return "Take a break. Set resistance to a comfortable level, and maintain a speed of about " + config["rest_speed_target"] + ".";
+	}
 }

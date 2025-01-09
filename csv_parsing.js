@@ -99,7 +99,6 @@ function parse_csv_item(item, item_type) {
 				"thighs", "calves",
 				"chest", "shoulders", "forearms", "biceps", "triceps"
 			].includes(item)) {
-			console.log(item);
 			return 'item malformed';
 		}
 		else {

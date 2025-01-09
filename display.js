@@ -33,7 +33,13 @@ function populate_exercise_screen() {
 	var exercise_note = current_exercise['exercise_note']
 	var set_index = current_exercise['set_index'];
 	var working_time_remaining = current_exercise['working_time_remaining'];
-	var workout_header = `${exercise_name} (set ${set_index}) ${exercise_note}`;
+	if(mode == "bike") {
+		config = workout_plan[current_exercise['exercise_index']];
+		var workout_header = bike_display_text(true, config);
+	}
+	else {
+		var workout_header = `${exercise_name} (set ${set_index}) ${exercise_note}`;
+	}
 	var exercise_image_url = current_exercise['exercise_image_url'];
 
 	document.getElementById("message").innerHTML="It's go time!";
@@ -49,7 +55,13 @@ function populate_rest_screen() {
 	var exercise_note = current_exercise['exercise_note']
 	var set_index = current_exercise['set_index']
 	var rest_time_remaining = current_exercise['rest_time_remaining']
-	var workout_header = `Next exercise: ${next_exercise_name} (set ${set_index}) ${exercise_note}`
+	if(mode == "bike") {
+		config = workout_plan[current_exercise['exercise_index']];
+		var workout_header = bike_display_text(false, config)
+	}
+	else {
+		var workout_header = `Next exercise: ${next_exercise_name} (set ${set_index}) ${exercise_note}`
+	}
 	var exercise_image_url = current_exercise['exercise_image_url'];
 
 	document.getElementById("message").innerHTML="Rest time! Grab some water.";
@@ -171,11 +183,12 @@ function populate_plan_screen() {
 
 // stretches
 
-function set_mode(chosen_mode){
-	if(chosen_mode == "workout"){
+function set_mode(chosen_mode) {
+	if(chosen_mode == "workout") {
 		document.getElementById("workout_configuration").style.display = "";
 		document.getElementById("stretch_configuration").style.display = "none";
 		document.getElementById("warmup_cooldown_config").style.display = "";
+		document.getElementById("bike_configuration").style.display = "none";
 		document.getElementById("areas_config").style.display = "";
 		document.getElementById("set_count").value = 2;
 		document.getElementById("working_time").value = 45;
@@ -185,20 +198,29 @@ function set_mode(chosen_mode){
 	else if(chosen_mode == "stretch") {
 		document.getElementById("workout_configuration").style.display = "none";
 		document.getElementById("stretch_configuration").style.display = "";
-		document.getElementById("pt_configuration").style.display = "none";
+		document.getElementById("bike_configuration").style.display = "none";
 		document.getElementById("warmup_cooldown_config").style.display = "";
 		document.getElementById("areas_config").style.display = "";
 		mode = "stretch";
 	}
-	else if(chosen_mode == "PT"){
+	else if(chosen_mode == "PT") {
 		document.getElementById("workout_configuration").style.display = "";
 		document.getElementById("stretch_configuration").style.display = "none";
 		document.getElementById("warmup_cooldown_config").style.display = "none";
+		document.getElementById("bike_configuration").style.display = "none";
 		document.getElementById("areas_config").style.display = "none";
 		document.getElementById("set_count").value = 3;
 		document.getElementById("working_time").value = 30;
 		document.getElementById("rest_time").value = 10;
 		mode = "PT";
+	}
+	else if(chosen_mode == "bike") {
+		document.getElementById("workout_configuration").style.display = "none";
+		document.getElementById("stretch_configuration").style.display = "none";
+		document.getElementById("bike_configuration").style.display = "";
+		document.getElementById("warmup_cooldown_config").style.display = "none";
+		document.getElementById("areas_config").style.display = "none";
+		mode = "bike";
 	}
 }
 

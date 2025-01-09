@@ -21,9 +21,13 @@
 		</div>
 		<div>
 			<input type="radio" id="pt_mode" name="mode" value="pt_mode" onChange="set_mode('PT')">
-			<label for="pt_mode">Physical Therapy (beta)</label>
-			<div><ul><li>I am not a physical therapist and this isn't medical advice. These are just exercises that I was assigned while I was in physical therapy for lower back pain. I've developed this mode to help me continue my practice at home.</li></ul></div>
+			<label for="pt_mode">Physical Therapy</label>
 		</div>
+		<div>
+			<input type="radio" id="bike_mode" name="mode" value="bike_mode" onChange="set_mode('bike')">
+			<label for="bike_mode">Bike (beta)</label>
+		</div>
+		<br>
 		<div>
 			<input type="checkbox" id="plan_only" name="plan_only" value="plan_only">
 			  <label for="plan_only">Plan-only</label>
@@ -38,6 +42,27 @@
 		<br>
 		<div>
 	  		<button type="button" id="start_workout" onClick="process_stretch_choices()"><h1>Start</h1></button>
+	  	</div>
+	</div>
+	<div id="bike_configuration" meta name="viewport" content="width=device-width, initial-scale=1" style="display:none">
+		<label for="bike_level">Difficulty level:</label>
+		<input type="number" id="bike_level" name="bike_level" value="1">
+		<br>
+		<label for="bike_length">Ride duration (minutes):</label>
+		<input type="number" id="bike_length" name="bike_length" value="20">
+		<br>
+		<br>
+		<div>
+			<input type="radio" id="frequent_changes" name="bike_style" value="frequent" checked>
+			<label for="frequent_changes">Change up the pace frequently</label>
+		</div>
+		<div>
+			<input type="radio" id="infrequent_changes" name="bike_style" value="infrequent">
+			<label for="infrequent_changes">Ride at the same pace for longer periods (not yet implemented)</label>
+		</div>
+		<br>
+		<div>
+	  		<button type="button" id="start_workout" onClick="process_bike_choices()"><h1>Start</h1></button>
 	  	</div>
 	</div>
 	<div id="workout_configuration" meta name="viewport" content="width=device-width, initial-scale=1">

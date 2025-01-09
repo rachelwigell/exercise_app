@@ -35,6 +35,10 @@ function random_range(min, max) {
   return Math.floor(Math.random() * (max - min) + min);
 }
 
+function random_range_continuous(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
 function value_to_percentage(progress_type) {
 	if(progress_type == 'exercise') {
 		if(mode == "stretch"){
