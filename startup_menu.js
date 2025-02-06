@@ -318,19 +318,19 @@ function process_stretch_choices() {
 // bike
 
 function design_bike_workout(difficulty, style, duration) {
-	BASE_REST_SPEED = 12;
+	BASE_REST_SPEED = 10;
 	BASE_CHALLENGE_SPEED = 15;
 
 	workout_plan = [];
 	
 	if(style == "frequent") {
 		// 1 minute warmup
-		// 1 minute long challenges separated by 2 minute long rests
+		// 1 minute long challenges separated by 1 minute long rests
 		// 1 minute cooldown
-		num_exercises = Math.floor(duration/3);
+		num_exercises = Math.floor((duration-2)/2);
 		workout_config['exercise_count'] = num_exercises;
 		workout_config['working_time'] = 60;
-		workout_config['rest_time'] = 120;
+		workout_config['rest_time'] = 60;
 		workout_config['set_count'] = 1;
 
 		var speed_target = Math.floor(BASE_REST_SPEED + difficulty + random_range_continuous(-2, 1));
