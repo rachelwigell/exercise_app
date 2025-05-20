@@ -26,6 +26,7 @@ var workout_config = {
 	// valid_exercise_types_sub_level - list of sub-level exercise types (e.g. chest, calves) that are valid for this configuration
 };
 var mode = "workout";
+var stretch_routine = "hips";
 
 // data processing
 function capture_workout_choices() {
@@ -291,15 +292,16 @@ function process_stretch_choices() {
 	if(uploaded_data) {
 		var raw_data = uploaded_data;
 	}
-	else {
-		var raw_data = read_exercise_csv("https://raw.githubusercontent.com/rachelwigell/exercise_app/main/assets/stretches.csv");
+	else if(stretch_routine == "hips")
+		var raw_data = read_exercise_csv("https://raw.githubusercontent.com/rachelwigell/exercise_app/main/assets/hip_stretches.csv");
+	else if(stretch_routine == "lower_back") {
+		var raw_data = read_exercise_csv("https://raw.githubusercontent.com/rachelwigell/exercise_app/main/assets/lower_back_stretches.csv");
 	}
+
 	workout_plan = parse_stretch_csv(raw_data);
-	console.log(workout_plan);
 	workout_config['exercise_count'] = workout_plan.length;
 	workout_config['set_count'] = 1;
 	workout_config['rest_time'] = 0;
-	console.log(workout_config);
 
 	document.getElementById("stretch_configuration").innerHTML="";
 	document.getElementById("mode_choice").innerHTML="";
@@ -309,7 +311,7 @@ function process_stretch_choices() {
 		'set_index': 1,
 		'working_time_remaining': workout_plan[0]['stretch_length_seconds'],
 		'rest_time_remaining': COUNTDOWN_LENGTH,
-		'exercise_image_url': undefined,
+		'exercise_image_url': workout_plan[0]['stretch_image'],
 		'exercise_note': ""
 	}
 	start_main_workout();
@@ -385,9 +387,6 @@ function process_bike_choices() {
 	var style = document.querySelector('input[name="bike_style"]:checked').value;
 	var duration = document.getElementById("bike_length").value;
 	design_bike_workout(difficulty, style, duration);
-
-	console.log(workout_plan);
-	console.log(workout_config);
 
 	document.getElementById("bike_configuration").innerHTML="";
 	document.getElementById("mode_choice").innerHTML="";

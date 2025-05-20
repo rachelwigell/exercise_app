@@ -181,8 +181,6 @@ function populate_plan_screen() {
 	document.getElementById("plans").innerHTML = generate_workout_plan_string();
 }
 
-// stretches
-
 function set_mode(chosen_mode) {
 	if(chosen_mode == "workout") {
 		document.getElementById("workout_configuration").style.display = "";
@@ -222,5 +220,11 @@ function set_mode(chosen_mode) {
 		document.getElementById("areas_config").style.display = "none";
 		mode = "bike";
 	}
+}
+
+// stretches
+
+function set_stretch_routine(chosen_routine) {
+	stretch_routine = chosen_routine;
 }
 

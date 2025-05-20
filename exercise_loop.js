@@ -102,7 +102,7 @@ function increment_stretch(){
 	if(current_exercise['exercise_index'] < workout_config['exercise_count']) {
 		current_exercise['working_time_remaining'] = workout_plan[current_exercise['exercise_index']]['stretch_length_seconds'];
 		current_exercise['exercise_name'] = workout_plan[current_exercise['exercise_index']]['stretch_name'];
-		current_exercise['exercise_image_url'] = undefined;
+		current_exercise['exercise_image_url'] = workout_plan[current_exercise['exercise_index']]['stretch_image'];
 		current_exercise['exercise_note'] = "";
 	}
 	else {

@@ -35,6 +35,16 @@
 		<br>
 	</div>
 	<div id="stretch_configuration" meta name="viewport" content="width=device-width, initial-scale=1" style="display:none">
+		<b><label for="stretch_routine">Supported stretch routines:</label></b>
+		<div>
+			<input type="radio" id="hip_stretches" name="stretch_routine" value="hip_stretches" onChange="set_stretch_routine('hips')" checked>
+			<label for="hip_stretches">Hips</label>
+		</div>
+		<div>
+			<input type="radio" id="lower_back_stretches" name="stretch_routine" value="lower_back_stretches" onChange="set_stretch_routine('lower_back')">
+			<label for="lower_back_stretches">Lower back</label>
+		</div>
+		<br>
 		<div>
 			<label for="csv_upload">Upload stretch routine CSV (optional):</label><br>
 		  	<input id="csv_upload" name="files[]" multiple="" type="file" onChange="read_uploaded_file(this)"/>

@@ -146,7 +146,8 @@ function parse_stretch_csv(raw_data) {
 		var row = parsed_data[i].split(',')
 		var stretch_name = row[0];
 		var stretch_length_seconds = row[1];
-		parsed_data[i] = {'stretch_name': stretch_name, 'stretch_length_seconds': stretch_length_seconds};
+		var stretch_image = row[2];
+		parsed_data[i] = {'stretch_name': stretch_name, 'stretch_length_seconds': stretch_length_seconds, 'stretch_image': stretch_image};
 	}
 	return parsed_data;
 }
